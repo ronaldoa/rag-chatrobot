@@ -14,12 +14,16 @@ env/
 ENV/
 
 # 大文件（不提交）
-models/*.gguf
-models/*.bin
-vector_store/
-data/
-sentence-transformers/
-BAAI/
+models/**
+!models/.gitkeep
+vector_store/**
+!vector_store/.gitkeep
+data/**
+!data/.gitkeep
+sentence-transformers/**
+!sentence-transformers/.gitkeep
+BAAI/**
+!BAAI/.gitkeep
 
 
 # 环境变量
@@ -41,4 +45,3 @@ logs/
 # 系统文件
 .DS_Store
 Thumbs.db
-BAAI/
