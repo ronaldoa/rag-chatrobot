@@ -1,0 +1,19 @@
+Document ingestion & vectorization flow
+=======================================
+
+Start: `python ingest.py`
+
+1) Validate environment (paths, model hints)
+2) Scan `data/` for supported files
+3) Load documents with loaders (.txt, .pdf, .docx, .csv, .html/.htm)
+4) Split documents with `RecursiveCharacterTextSplitter`
+   - chunk_size = 1000
+   - chunk_overlap = 200
+5) Load embedding model (`paraphrase-MiniLM-L6-v2`)
+6) Batch vectorize chunks (batch=100)
+7) Build FAISS index (`IndexFlatIP`) via `FAISS.from_documents`
+8) Save to disk
+   - `index.faiss` (vectors)
+   - `index.pkl` (metadata)
+
+Result: vector store ready → run `python app.py`

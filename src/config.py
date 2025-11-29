@@ -1,0 +1,185 @@
+"""Project configuration management."""
+
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+from typing import Dict, Any
+
+# Load environment variables
+load_dotenv()
+
+# ============ Paths ============
+BASE_DIR = Path(__file__).parent.parent
+DATA_PATH = os.getenv("DATA_PATH", str(BASE_DIR / "data"))
+VECTOR_STORE_PATH = os.getenv("VECTOR_STORE_PATH", str(BASE_DIR / "vector_store"))
+LOG_PATH = os.getenv("LOG_PATH", str(BASE_DIR / "logs"))
+MODELS_PATH = os.getenv("MODELS_PATH", str(BASE_DIR / "models"))
+
+# ============ Model configuration ============
+GGUF_MODEL_PATH = os.getenv(
+    "GGUF_MODEL_PATH",
+    str(BASE_DIR / "models" / "Meta-Llama-3.1-8B-Instruct-Q4_0_4_4.gguf"),
+)
+EMBEDDING_MODEL = os.getenv(
+    "EMBEDDING_MODEL", "sentence-transformers/paraphrase-MiniLM-L6-v2"
+)
+RERANKER_MODEL = os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-base")
+
+# ============ LLM parameters ============
+N_CTX = int(os.getenv("N_CTX", "4096"))
+N_THREADS = int(os.getenv("N_THREADS", "8"))
+N_GPU_LAYERS = int(os.getenv("N_GPU_LAYERS", "0"))
+N_BATCH = int(os.getenv("N_BATCH", "512"))
+TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS", "512"))
+TOP_P = float(os.getenv("TOP_P", "0.95"))
+REPEAT_PENALTY = float(os.getenv("REPEAT_PENALTY", "1.15"))
+
+# ============ Retrieval parameters ============
+INITIAL_K = int(os.getenv("INITIAL_K", "20"))
+FINAL_K = int(os.getenv("FINAL_K", "3"))
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "1000"))
+CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "200"))
+
+# ============ Server configuration ============
+SERVER_HOST = os.getenv("SERVER_HOST", "0.0.0.0")
+SERVER_PORT = int(os.getenv("SERVER_PORT", "7860"))
+RELOAD = os.getenv("RELOAD", "False").lower() == "true"
+LOG_LEVEL = os.getenv("LOG_LEVEL", "info")
+SHARE = os.getenv("SHARE", "False").lower() == "true"
+
+# ============ Prompt template ============
+PROMPT_TEMPLATE = """<|start_header_id|>system<|end_header_id|>
+
+You are a professional and helpful AI assistant. Answer the user's question accurately based only on the context provided below.
+
+Important instructions:
+- If the context includes relevant information, provide a detailed and accurate answer using it.
+- If the context is insufficient, clearly state: "Based on the provided information, I cannot fully answer this question."
+- Do not invent or guess information that is not in the context.
+- Keep the answer clear and structured; use lists when it helps readability.
+
+Context:
+{context}
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+{question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+"""
+
+# ============ Supported file extensions ============
+SUPPORTED_EXTENSIONS = {
+    ".txt": "text",
+    ".pdf": "pdf",
+    ".docx": "docx",
+    ".csv": "csv",
+    ".html": "html",
+    ".htm": "html",
+}
+
+
+# ============ Configuration helper ============
+class Settings:
+    """Configuration helper class."""
+
+    @staticmethod
+    def to_dict() -> Dict[str, Any]:
+        """Export all configuration values as a dictionary."""
+        return {
+            # Paths
+            "base_dir": str(BASE_DIR),
+            "data_path": DATA_PATH,
+            "vector_store_path": VECTOR_STORE_PATH,
+            "log_path": LOG_PATH,
+            "models_path": MODELS_PATH,
+            # Models
+            "gguf_model_path": GGUF_MODEL_PATH,
+            "embedding_model": EMBEDDING_MODEL,
+            "reranker_model": RERANKER_MODEL,
+            # LLM parameters
+            "n_ctx": N_CTX,
+            "n_threads": N_THREADS,
+            "n_gpu_layers": N_GPU_LAYERS,
+            "n_batch": N_BATCH,
+            "temperature": TEMPERATURE,
+            "max_tokens": MAX_TOKENS,
+            "top_p": TOP_P,
+            "repeat_penalty": REPEAT_PENALTY,
+            # Retrieval
+            "initial_k": INITIAL_K,
+            "final_k": FINAL_K,
+            "chunk_size": CHUNK_SIZE,
+            "chunk_overlap": CHUNK_OVERLAP,
+            # Server
+            "server_host": SERVER_HOST,
+            "server_port": SERVER_PORT,
+            "reload": RELOAD,
+            "log_level": LOG_LEVEL,
+            "share": SHARE,
+            # Supported formats
+            "supported_extensions": list(SUPPORTED_EXTENSIONS.keys()),
+        }
+
+    @staticmethod
+    def get_model_info() -> Dict[str, Any]:
+        """Return basic model file information."""
+        model_path = Path(GGUF_MODEL_PATH)
+        return {
+            "model_name": model_path.name if model_path.exists() else "Not Found",
+            "model_size": f"{model_path.stat().st_size / (1024**3):.2f} GB"
+            if model_path.exists()
+            else "N/A",
+            "model_exists": model_path.exists(),
+        }
+
+
+# ============ Environment validation ============
+def validate_environment():
+    """Validate required paths and model file."""
+    errors = []
+
+    # Ensure required directories exist
+    for path_name, path_value in [
+        ("DATA_PATH", DATA_PATH),
+        ("MODELS_PATH", MODELS_PATH),
+        ("LOG_PATH", LOG_PATH),
+    ]:
+        path = Path(path_value)
+        if not path.exists():
+            try:
+                path.mkdir(parents=True, exist_ok=True)
+                print(f"Created directory: {path}")
+            except Exception as e:
+                errors.append(f"Could not create directory {path_name}: {e}")
+
+    # Check model file presence
+    if not Path(GGUF_MODEL_PATH).exists():
+        errors.append(
+            f"Model file missing: {GGUF_MODEL_PATH}\n"
+            "Download from https://huggingface.co/TheBloke/Llama-3.1-8B-Instruct-GGUF"
+        )
+
+    if errors:
+        print("\nEnvironment configuration issues:\n")
+        for error in errors:
+            print(f"- {error}")
+        return False
+
+    return True
+
+
+def print_config():
+    """Print current configuration."""
+    print("\n" + "=" * 60)
+    print("Current configuration")
+    print("=" * 60)
+    print(f"Model path:      {GGUF_MODEL_PATH}")
+    print(f"Data directory:  {DATA_PATH}")
+    print(f"Vector store:    {VECTOR_STORE_PATH}")
+    print(f"Context window:  {N_CTX}")
+    print(f"CPU threads:     {N_THREADS}")
+    print(f"GPU layers:      {N_GPU_LAYERS}")
+    print(f"Retrieval:       FAISS(top-{INITIAL_K}) + Reranker(top-{FINAL_K})")
+    print("=" * 60 + "\n")
+    print("=" * 60 + "\n")

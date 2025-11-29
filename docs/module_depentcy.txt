@@ -1,0 +1,30 @@
+Module dependencies (bottom to top)
+====================================
+
+Level 0: Third-party libraries
+  - LlamaCpp, SentenceTransformers, LangChain, FAISS
+  - FastAPI, Gradio, Pydantic, Uvicorn
+
+Level 1: Configuration
+  - src/config.py (env vars, paths, model params, prompt template)
+
+Level 2: Utilities
+  - src/utils.py (logger, directory helpers, source formatting)
+
+Level 3: Components
+  - src/embeddings.py (get_embeddings → SentenceTransformers, config)
+  - src/retriever.py (RerankerRetriever → FAISS, CrossEncoder, config)
+  - src/llm.py (get_llm → LlamaCpp, config)
+
+Level 4: Service
+  - src/qa_service.py (QAService: initialize/ask/health_check; depends on embeddings, retriever, llm, LangChain)
+
+Level 5: Interface
+  - api/ (models.py, chat.py, documents.py) → FastAPI, Pydantic, qa_service
+  - ui/gradio_interface.py → Gradio, qa_service
+
+Level 6: Application
+  - app.py (FastAPI app: startup, router registration, Gradio mount, CORS; depends on all lower layers)
+
+Runtime
+  - uvicorn.run(app)

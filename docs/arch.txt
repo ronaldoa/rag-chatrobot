@@ -1,0 +1,36 @@
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           Llama 3 Chatbot System                            │
+│                      Gradio + FastAPI hybrid architecture                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+User layer
+----------
+- Web browser (Gradio UI) @ localhost:7860
+- Mobile/API client
+- Third-party integrations
+
+Application layer (FastAPI app.py)
+----------------------------------
+- Gradio interface (ui/gradio_interface.py)
+  - ChatInterface and example prompts
+- REST API routes (api/)
+  - POST /api/chat
+  - GET  /api/health
+  - POST /api/documents/...
+- QA Service (src/qa_service.py)
+  - initialize(), ask(), health_check()
+
+Business logic layer
+--------------------
+- Embeddings (src/embeddings.py) — get_embeddings(), MiniLM-L6
+- Retriever (src/retriever.py) — RerankerRetriever, two-stage retrieval
+- LLM (src/llm.py) — get_llm(), LlamaCpp
+
+Data / model layer
+------------------
+- SentenceTransformers → text to vectors (384 dims)
+- FAISS vector database → index.faiss, index.pkl
+- GGUF model file → llama-3.1-8b-instruct-q4_k_m.gguf (~5GB)
+- CrossEncoder reranker → BAAI/bge-reranker-base
+- Document store → data/ (.txt, .pdf, .docx, .csv, .html)
+- LlamaCpp engine (C++) → inference + KV cache
