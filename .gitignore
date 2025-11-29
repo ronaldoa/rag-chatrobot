@@ -18,6 +18,9 @@ models/*.gguf
 models/*.bin
 vector_store/
 data/
+sentence-transformers/
+BAAI/
+
 
 # 环境变量
 .env
@@ -28,7 +31,6 @@ logs/
 
 # Jupyter
 .ipynb_checkpoints/
-*.ipynb
 
 # IDE
 .vscode/
@@ -39,3 +41,4 @@ logs/
 # 系统文件
 .DS_Store
 Thumbs.db
+BAAI/
