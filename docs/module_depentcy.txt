@@ -125,7 +125,7 @@
 │                    │  FastAPI App:       │                      │
 │                    │  • Startup events   │                      │
 │                    │  • Route registry   │                      │
-│                    │  • Mount Gradio     │                      │
+│                    │  • Mount Streamlit  │                      │
 │                    │  • CORS settings    │                      │
 │                    │                     │                      │
 │                    │  Depends on all     │                      │

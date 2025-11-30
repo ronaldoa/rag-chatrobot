@@ -1,19 +1,19 @@
 # 🦙 Llama 3 Local Knowledge-Base QA
 
-High-performance local RAG (Retrieval Augmented Generation) built with LlamaCpp + GGUF + FAISS + a reranker. Runs fully on CPU with optional GPU acceleration and ships with both a Gradio web UI and REST API.
+High-performance local RAG (Retrieval Augmented Generation) built with LlamaCpp + GGUF + FAISS + a reranker. Runs fully on CPU with optional GPU acceleration and ships with both a Streamlit web UI and REST API.
 
 ## ✨ Features
 
 - 🚀 **Fast inference**: LlamaCpp + GGUF quantized models
 - 🎯 **Accurate retrieval**: Two-stage flow (FAISS coarse + reranker fine)
 - 💻 **CPU-first**: Works without a GPU (GPU layers optional)
-- 🌐 **Two interfaces**: Gradio web UI + RESTful API
+- 🌐 **Two interfaces**: Streamlit web UI + RESTful API
 - 📚 **Multi-format docs**: TXT, PDF, DOCX, CSV, HTML
 - 🔌 **Easy integration**: Standard REST endpoints for any client
 
 ## 🏗️ Architecture
 
-User → Gradio UI / API → QA Service
+User → Streamlit UI / API → QA Service
   ├─ FAISS retrieval (coarse top-20)
   ├─ Reranker (fine top-3)
   └─ LlamaCpp generation
@@ -182,9 +182,9 @@ llama3-chatbot-hybrid/
 │   ├── chat.py
 │   ├── documents.py
 │   └── models.py
-├── ui/                # Gradio UI
-│   └── gradio_interface.py
-├── app.py             # Main app
+├── ui/                # Streamlit
+│   └── ui.py
+├──
 ├── ingest.py          # Document ingestion
 ├── requirements.txt
 ├── .env.example

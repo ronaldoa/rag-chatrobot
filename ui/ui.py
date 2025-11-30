@@ -23,7 +23,7 @@ from src.config import Settings
 
 
 # ==========================================
-# 1. 页面基础配置
+# 1. Base page configuration
 # ==========================================
 st.set_page_config(
     page_title="aiaio - Jesse Livermore",
@@ -149,67 +149,67 @@ def flatten_config_to_df(data: Dict) -> pd.DataFrame:
 
 
 # ==========================================
-# 3. 初始化
+# 3. Initialization
 # ==========================================
 service = load_service()
 ensure_state(service.current_llm_params())
 
 
 # ==========================================
-# 4. 深度定制 CSS (核心 UI 逻辑)
+# 4. Deep CSS customization (core UI logic)
 # ==========================================
 st.markdown(
     """
     <style>
-        /* --- 颜色变量定义 --- */
+        /* --- Color variables --- */
         :root {
-            --bg-dark: #0f172a;      /* 主背景: Slate 900 */
-            --sidebar-bg: #1e293b;   /* 侧边栏: Slate 800 */
-            --text-primary: #f1f5f9; /*主要文字: Slate 100 */
-            --text-secondary: #94a3b8; /* 次要文字: Slate 400 */
-            --accent-blue: #3b82f6;  /* 强调色: Blue 500 */
-            --border-color: #334155; /* 边框: Slate 700 */
+            --bg-dark: #0f172a;      /* Main background: Slate 900 */
+            --sidebar-bg: #1e293b;   /* Sidebar background: Slate 800 */
+            --text-primary: #f1f5f9; /* Primary text: Slate 100 */
+            --text-secondary: #94a3b8; /* Secondary text: Slate 400 */
+            --accent-blue: #3b82f6;  /* Accent: Blue 500 */
+            --border-color: #334155; /* Border: Slate 700 */
         }
 
-        /* --- 全局样式重置 --- */
+        /* --- Global style reset --- */
         .stApp {
             background-color: var(--bg-dark);
             color: var(--text-primary);
         }
 
-        /* 隐藏 Streamlit 默认头部和菜单 */
+        /* Hide Streamlit default header/menu */
         header, #MainMenu, footer {visibility: hidden;}
 
-        /* 减少顶部留白 */
+        /* Reduce top padding */
         .block-container {
             padding-top: 1rem !important;
             padding-bottom: 2rem !important;
         }
 
-        /* --- 侧边栏高级布局 (Flexbox Hack) --- */
+        /* --- Sidebar advanced layout (Flexbox hack) --- */
         section[data-testid="stSidebar"] {
             background-color: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
         }
 
-        /* 关键：将侧边栏容器改为 Flex 列布局，并撑满高度 */
+        /* Make sidebar container a full-height flex column */
         section[data-testid="stSidebar"] > div {
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* 顶底分布 */
+            justify-content: space-between; /* Distribute top/bottom */
         }
 
-        /* 让侧边栏上半部分(st.write区)占据剩余空间并可滚动 */
+        /* Let upper sidebar area take remaining space and scroll */
         section[data-testid="stSidebar"] > div > div:first-child {
             flex-grow: 1;
             overflow-y: auto;
             padding-bottom: 20px;
         }
 
-        /* --- UI 组件样式定制 --- */
+        /* --- UI component styling --- */
 
-        /* 输入框 & 下拉框 */
+        /* Inputs & dropdowns */
         .stTextInput > div > div > input,
         .stSelectbox > div > div > div,
         .stNumberInput > div > div > input,
@@ -220,7 +220,7 @@ st.markdown(
             border-radius: 6px;
         }
 
-        /* 聊天输入框容器 */
+        /* Chat input container */
         .stChatInputContainer {
             background-color: var(--bg-dark) !important;
             padding-bottom: 20px;
@@ -232,7 +232,7 @@ st.markdown(
             color: white !important;
         }
 
-        /* Tab 标签页 */
+        /* Tab headers */
         .stTabs [data-baseweb="tab-list"] {
             gap: 24px;
             background-color: var(--bg-dark);
@@ -247,7 +247,7 @@ st.markdown(
             font-weight: 600;
         }
 
-        /* 自定义 HTML 组件样式 */
+        /* Custom HTML component styles */
         .chat-history-item {
             padding: 10px;
             border-radius: 6px;
@@ -268,7 +268,7 @@ st.markdown(
             align-items: center;
             justify-content: space-between;
             background-color: var(--sidebar-bg);
-            margin: 0 -1rem; /* 抵消 padding */
+            margin: 0 -1rem; /* Offset padding */
             padding-left: 1.5rem;
             padding-right: 1.5rem;
         }
@@ -286,7 +286,7 @@ st.markdown(
 
 
 # ==========================================
-# 5. 侧边栏内容 (Sidebar)
+# 5. Sidebar content
 # ==========================================
 with st.sidebar:
     st.markdown(
@@ -338,7 +338,7 @@ with st.sidebar:
 
 
 # ==========================================
-# 7. 主界面 (Tabs Layout)
+# 7. Main interface (Tabs layout)
 # ==========================================
 tab1, tab2, tab3, tab4 = st.tabs(
     ["💬 Chat Interface", "📈 Backtest Dashboard", "📊 System Dashboard", "⚙️ Settings"]

@@ -212,7 +212,7 @@
         │                                         │
         ▼                                         ▼
 ┌──────────────────┐                    ┌──────────────────┐
-│  Gradio Display   │                    │  API JSON Output │
+│  Streamlit Display   │                    │  API JSON Output │
 │                   │                    │                  │
 │  UI shows:        │                    │  {               │
 │  • Answer         │                    │    "answer": "...│
