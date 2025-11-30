@@ -1,19 +1,112 @@
-Document ingestion & vectorization flow
-=======================================
+【Document Ingestion & Vectorization Pipeline】
 
-Start: `python ingest.py`
-
-1) Validate environment (paths, model hints)
-2) Scan `data/` for supported files
-3) Load documents with loaders (.txt, .pdf, .docx, .csv, .html/.htm)
-4) Split documents with `RecursiveCharacterTextSplitter`
-   - chunk_size = 1000
-   - chunk_overlap = 200
-5) Load embedding model (`paraphrase-MiniLM-L6-v2`)
-6) Batch vectorize chunks (batch=100)
-7) Build FAISS index (`IndexFlatIP`) via `FAISS.from_documents`
-8) Save to disk
-   - `index.faiss` (vectors)
-   - `index.pkl` (metadata)
-
-Result: vector store ready → run `python app.py`
+┌─────────────────────────────────────────────────────────────────┐
+│                        Start: python ingest.py                  │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+                    ┌────────────────────┐
+                    │  1. Environment Check│
+                    │  validate_env()     │
+                    └─────────┬──────────┘
+                              │
+                              ▼
+                    ┌────────────────────┐
+                    │  2. Scan data/ dir  │
+                    │  Find all documents │
+                    └─────────┬──────────┘
+                              │
+                              ▼
+        ┌─────────────────────┴─────────────────────┐
+        │                                           │
+        ▼                                           ▼
+┌───────────────┐                          ┌───────────────┐
+│  .txt Files    │                          │  .pdf Files    │
+│  TextLoader    │                          │  PyPDFLoader   │
+└───────┬───────┘                          └───────┬───────┘
+        │                                          │
+        │         ┌──────────────┐                 │
+        └────────→│  .docx Files  │←───────────────┘
+                  │  Docx2txt... │
+                  └──────┬───────┘
+                         │
+                         ▼
+            ┌────────────────────────────┐
+            │  3. Merge All Loaded Docs   │
+            │  documents = [doc1, ...]    │
+            └─────────────┬──────────────┘
+                          │
+                          ▼
+            ┌────────────────────────────┐
+            │  4. Document Chunking       │
+            │  RecursiveCharacterTextSplitter │
+            │                                │
+            │  Parameters:                   │
+            │  • chunk_size = 1000           │
+            │  • chunk_overlap = 200         │
+            └─────────────┬──────────────┘
+                          │
+                          ▼
+            ┌────────────────────────────┐
+            │  texts = [                  │
+            │    {content: "...", ...},   │
+            │    {content: "...", ...},   │
+            │    ...                      │
+            │  ]                          │
+            │  (e.g., 1000 text chunks)    │
+            └─────────────┬──────────────┘
+                          │
+                          ▼
+            ┌────────────────────────────┐
+            │  5. Load Embedding Model    │
+            │  get_embeddings()           │
+            │                              │
+            │  paraphrase-MiniLM-L6-v2     │
+            └─────────────┬──────────────┘
+                          │
+                          ▼
+            ┌────────────────────────────┐
+            │  6. Batch Embedding         │
+            │  (Process in batches of 100)│
+            │                              │
+            │  for batch in texts:         │
+            │    vectors = embed(batch)    │
+            └─────────────┬──────────────┘
+                          │
+         ┌────────────────┴────────────────┐
+         │                                 │
+         ▼                                 ▼
+┌─────────────────┐              ┌─────────────────┐
+│  Text 1 → Vec 1  │             │  Text 2 → Vec 2  │
+│  "Llama 3..."    │             │  "Performance..."│
+│  ↓               │             │  ↓               │
+│  [0.23, -0.45,   │             │  [0.18, -0.52,   │
+│   0.67, ...]     │             │   0.71, ...]     │
+│  (384 dims)      │             │  (384 dims)       │
+└────────┬────────┘              └────────┬────────┘
+         │                                 │
+         └────────────────┬────────────────┘
+                          │
+                          ▼
+            ┌────────────────────────────┐
+            │  7. Create FAISS Index      │
+            │  FAISS.from_documents()     │
+            │                              │
+            │  Index Type: IndexFlatIP     │
+            │  (Inner-Product Similarity)  │
+            └─────────────┬──────────────┘
+                          │
+                          ▼
+            ┌────────────────────────────┐
+            │  8. Save to Disk            │
+            │  vectorstore.save_local()   │
+            │                              │
+            │  • index.faiss (vector index)│
+            │  • index.pkl   (metadata)    │
+            └─────────────┬──────────────┘
+                          │
+                          ▼
+            ┌────────────────────────────┐
+            │  Done! Vector Store Built   │
+            │  Run: python app.py         │
+            └────────────────────────────┘

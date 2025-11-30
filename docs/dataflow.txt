@@ -1,0 +1,221 @@
+【Full Q&A Pipeline — From Question to Final Answer】
+
+┌──────────────────────────────────────────────────────────────────────┐
+│  User Input: "How does Llama 3 perform on code generation tasks?"     │
+└────────────────────────────┬─────────────────────────────────────────┘
+                             │
+        ┌────────────────────┴────────────────────┐
+        │ via Gradio UI            or       via API Request │
+        ▼                                         ▼
+┌──────────────────┐                    ┌──────────────────┐
+│ ui/gradio_...    │                    │ api/chat.py      │
+│ chat_function()  │                    │ POST /api/chat   │
+└────────┬─────────┘                    └────────┬─────────┘
+         │                                       │
+         └───────────────────┬───────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │   QA Service                        │
+            │   qa_service.ask(question)          │
+            │                                     │
+            │   Core Orchestration Logic          │
+            └────────────────┬───────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Phase 1: Retrieve Relevant Documents             │
+└─────────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Step 1: Query Embedding            │
+            │  embeddings.embed_query()           │
+            │                                     │
+            │  Input: "Llama 3 in code generation"│
+            │  Output: query_vector               │
+            │        [0.12, -0.34, 0.56, ...]     │
+            │        (384-dim vector)             │
+            └────────────────┬───────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Step 2: FAISS Retrieval (Coarse)   │
+            │  vectorstore.similarity_search()    │
+            │                                     │
+            │  Algorithm: Cosine similarity        │
+            │  similarity = cosine(query, docs)    │
+            │                                     │
+            │  Returns: top-20 candidate docs      │
+            └────────────────┬───────────────────┘
+                             │
+             ┌───────────────┴───────────────┐
+             │                               │
+             ▼                               ▼
+    ┌────────────────┐             ┌────────────────┐
+    │  Document 5    │             │  Document 12   │
+    │  Score: 0.78   │    ...      │  Score: 0.92   │
+    │  Rank: 5       │             │  Rank: 1       │
+    └────────────────┘             └────────────────┘
+             │                               │
+             └───────────────┬───────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Step 3: Reranker (Fine Ranking)     │
+            │  reranker.predict(pairs)             │
+            │                                      │
+            │  Input: [                             │
+            │    (question, doc5 text),             │
+            │    (question, doc12 text),            │
+            │    ...                                │
+            │  ]                                    │
+            │                                      │
+            │  CrossEncoder Deep Understanding:     │
+            │  • Analyze semantic relation          │
+            │  • Not only similarity, but relevance │
+            │  • Re-score all pairs                 │
+            └────────────────┬───────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Reranking Results:                 │
+            │                                      │
+            │  1. Document 12  Score: 0.94 ⭐⭐⭐   │
+            │     "On HumanEval benchmark..."      │
+            │                                      │
+            │  2. Document 5   Score: 0.87 ⭐⭐     │
+            │     "Code generation with Llama 3..."│
+            │                                      │
+            │  3. Document 3   Score: 0.81 ⭐       │
+            │     "Llama 3.1 supports..."           │
+            │                                      │
+            │  Keep top-3                           │
+            └────────────────┬───────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Phase 2: Generate Final Answer                  │
+└─────────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Step 4: Construct Prompt           │
+            │  PromptTemplate.format()            │
+            │                                     │
+            │  Constructed Prompt:                │
+            │  """                                │
+            │  <|begin_of_text|>                  │
+            │  <|start_header_id|>system...       │
+            │                                     │
+            │  You are an AI assistant. Use the   │
+            │  following context to answer:        │
+            │                                     │
+            │  Context:                            │
+            │  [Document 12 text]                  │
+            │  [Document 5 text]                   │
+            │  [Document 3 text]                   │
+            │                                     │
+            │  <|start_header_id|>user...         │
+            │  How does Llama 3 perform on         │
+            │  code generation tasks?              │
+            │                                     │
+            │  <|start_header_id|>assistant...    │
+            │  """                                │
+            └────────────────┬───────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Step 5: LlamaCpp Tokenization      │
+            │  (Built into GGUF model)             │
+            │                                     │
+            │  Text → Token IDs                    │
+            │  "Llama 3..." → [123, 456, ...]      │
+            └────────────────┬───────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Step 6: LlamaCpp Inference Engine  │
+            │  llm(prompt)                        │
+            │                                     │
+            │  C++ Inference Loop:                 │
+            │  ┌────────────────────────────┐      │
+            │  │ while not end_token:       │      │
+            │  │   1. Forward pass           │      │
+            │  │      • Matrix multiplications│     │
+            │  │      • Attention computation │     │
+            │  │      • LayerNorm             │     │
+            │  │   2. Sample next token        │    │
+            │  │      • temperature=0.7        │    │
+            │  │      • top_p=0.95             │    │
+            │  │   3. Append to output         │    │
+            │  │   4. Update KV cache          │    │
+            │  └────────────────────────────┘      │
+            │                                     │
+            │  Generation Speed: ~10 tokens/sec    │
+            │  (CPU mode)                          │
+            └────────────────┬───────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Generated Token Sequence:          │
+            │  [234, 567, 890, 123, 456, ...]     │
+            │                                     │
+            │  Token-by-token streaming            │
+            └────────────────┬───────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Step 7: Detokenization             │
+            │  (Token IDs → Text)                 │
+            │                                     │
+            │  [234, 567, ...] → "Based on the..."│
+            └────────────────┬───────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Step 8: Post-processing            │
+            │  LangChain Post-Processing          │
+            │                                     │
+            │  • Remove special tokens            │
+            │    (<|eot_id|>, <|begin_of_text|>) │
+            │  • Clean extra spaces               │
+            │  • Extract source references        │
+            └────────────────┬───────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Final Output                                     │
+└─────────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+            ┌────────────────────────────────────┐
+            │  Final Answer:                     │
+            │                                     │
+            │  "Based on the provided context,    │
+            │   Llama 3.1 performs strongly on     │
+            │   code generation tasks. On the      │
+            │   HumanEval benchmark, the 8B model  │
+            │   achieves a pass@1 score of 68.4%,  │
+            │   outperforming most open-source     │
+            │   models of similar size. It shows   │
+            │   strong accuracy in generating      │
+            │   Python and JavaScript code with     │
+            │   improved quality and correctness." │
+            │                                     │
+            │  Sources:                           │
+            │  • llama3_benchmark.pdf (page 15)   │
+            │  • technical_report.txt             │
+            └────────────────┬───────────────────┘
+                             │
+        ┌────────────────────┴────────────────────┐
+        │                                         │
+        ▼                                         ▼
+┌──────────────────┐                    ┌──────────────────┐
+│  Gradio Display   │                    │  API JSON Output │
+│                   │                    │                  │
+│  UI shows:        │                    │  {               │
+│  • Answer         │                    │    "answer": "...│
+│  • Source links   │                    │    "sources": [] │
+│                   │                    │  }               │
+└──────────────────┘                    └──────────────────┘

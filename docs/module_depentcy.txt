@@ -1,30 +1,140 @@
-Module dependencies (bottom to top)
-====================================
+【Module Dependency Hierarchy — From Bottom to Top】
 
-Level 0: Third-party libraries
-  - LlamaCpp, SentenceTransformers, LangChain, FAISS
-  - FastAPI, Gradio, Pydantic, Uvicorn
-
-Level 1: Configuration
-  - src/config.py (env vars, paths, model params, prompt template)
-
-Level 2: Utilities
-  - src/utils.py (logger, directory helpers, source formatting)
-
-Level 3: Components
-  - src/embeddings.py (get_embeddings → SentenceTransformers, config)
-  - src/retriever.py (RerankerRetriever → FAISS, CrossEncoder, config)
-  - src/llm.py (get_llm → LlamaCpp, config)
-
-Level 4: Service
-  - src/qa_service.py (QAService: initialize/ask/health_check; depends on embeddings, retriever, llm, LangChain)
-
-Level 5: Interface
-  - api/ (models.py, chat.py, documents.py) → FastAPI, Pydantic, qa_service
-  - ui/gradio_interface.py → Gradio, qa_service
-
-Level 6: Application
-  - app.py (FastAPI app: startup, router registration, Gradio mount, CORS; depends on all lower layers)
-
-Runtime
-  - uvicorn.run(app)
+┌─────────────────────────────────────────────────────────────────┐
+│  Level 0: Third-party Libraries                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌───────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐   │
+│  │ LlamaCpp  │  │ Sentence   │  │  LangChain │  │  FAISS   │   │
+│  │ (C++)     │  │ Transform. │  │            │  │          │   │
+│  └───────────┘  └────────────┘  └────────────┘  └──────────┘   │
+│                                                                 │
+│  ┌───────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐   │
+│  │  FastAPI  │  │   Gradio   │  │  Pydantic  │  │  Uvicorn │   │
+│  └───────────┘  └────────────┘  └────────────┘  └──────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Level 1: Configuration                                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│                    ┌─────────────────────┐                      │
+│                    │   src/config.py     │                      │
+│                    │                     │                      │
+│                    │  • Environment vars │                      │
+│                    │  • Path settings    │                      │
+│                    │  • Model parameters │                      │
+│                    │  • Prompt templates │                      │
+│                    └─────────────────────┘                      │
+│                             │                                   │
+│                             │ Imported by all modules           │
+│                             ▼                                   │
+└─────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Level 2: Utilities                                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│                    ┌─────────────────────┐                      │
+│                    │   src/utils.py      │                      │
+│                    │                     │                      │
+│                    │  • setup_logger()   │                      │
+│                    │  • ensure_dirs()    │                      │
+│                    │  • format_sources() │                      │
+│                    └─────────────────────┘                      │
+│                             │                                   │
+│                             │ Used by multiple modules          │
+│                             ▼                                   │
+└─────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Level 3: Components                                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐   │
+│  │ src/embeddings   │  │ src/retriever    │  │  src/llm     │   │
+│  │                  │  │                  │  │              │   │
+│  │ get_embeddings() │  │ RerankerRet...() │  │  get_llm()   │   │
+│  │                  │  │                  │  │              │   │
+│  │ Depends on:      │  │ Depends on:      │  │ Depends on:  │   │
+│  │  • SentenceTrans │  │  • FAISS         │  │  • LlamaCpp  │   │
+│  │  • config        │  │  • CrossEncoder  │  │  • config    │   │
+│  └──────────────────┘  └──────────────────┘  └──────────────┘   │
+│           │                     │                     │          │
+│           └─────────────────────┼─────────────────────┘          │
+│                                 ▼                                │
+└─────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Level 4: Service                                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│                    ┌─────────────────────┐                      │
+│                    │ src/qa_service.py   │                      │
+│                    │                     │                      │
+│                    │  QAService class:   │                      │
+│                    │  • initialize()     │                      │
+│                    │  • ask()            │                      │
+│                    │  • health_check()   │                      │
+│                    │                     │                      │
+│                    │  Depends on:        │                      │
+│                    │  • embeddings       │                      │
+│                    │  • retriever        │                      │
+│                    │  • llm              │                      │
+│                    │  • LangChain        │                      │
+│                    └─────────────────────┘                      │
+│                             │                                   │
+│                             │ Core business logic               │
+│                             ▼                                   │
+└─────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Level 5: API / UI (Interface Layer)                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────┐              ┌──────────────────────┐    │
+│  │  api/            │              │  ui/                 │    │
+│  │                  │              │                      │    │
+│  │  • models.py     │              │  • gradio_interface  │    │
+│  │  • chat.py       │              │                      │    │
+│  │  • documents.py  │              │  create_gradio_...() │    │
+│  │                  │              │                      │    │
+│  │  Depends on:     │              │  Depends on:         │    │
+│  │  • FastAPI       │              │  • Gradio            │    │
+│  │  • Pydantic      │              │  • qa_service        │    │
+│  │  • qa_service    │              │                      │    │
+│  └──────────────────┘              └──────────────────────┘    │
+│           │                                 │                  │
+│           └─────────────────┬───────────────┘                  │
+│                             ▼                                  │
+└─────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Level 6: Application                                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│                    ┌─────────────────────┐                      │
+│                    │      app.py         │                      │
+│                    │                     │                      │
+│                    │  FastAPI App:       │                      │
+│                    │  • Startup events   │                      │
+│                    │  • Route registry   │                      │
+│                    │  • Mount Gradio     │                      │
+│                    │  • CORS settings    │                      │
+│                    │                     │                      │
+│                    │  Depends on all     │                      │
+│                    │  lower-level modules│                      │
+│                    └─────────────────────┘                      │
+└─────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+                    ┌─────────────────────┐
+                    │     Runtime         │
+                    │   uvicorn.run()     │
+                    └─────────────────────┘

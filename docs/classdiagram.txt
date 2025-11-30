@@ -1,16 +1,16 @@
 ┌─────────────────────────────────────────────────────────────────────┐
-│                           Class Diagram                             │
+│                          Class Diagram                               │
 └─────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────┐
-│        QAService             │  ◄─── Singleton (qa_service)
+│          QAService           │  ◄─── Singleton (qa_service)
 ├──────────────────────────────┤
-│ - qa_chain: RetrievalQA      │
-│ - _initialized: bool         │
+│ - qa_chain: RetrievalQA       │
+│ - _initialized: bool          │
 ├──────────────────────────────┤
-│ + initialize(): void         │
-│ + ask(question): Dict        │
-│ + health_check(): Dict       │
+│ + initialize(): void          │
+│ + ask(question): Dict         │
+│ + health_check(): Dict        │
 └──────────┬───────────────────┘
            │ Composition
            │
@@ -18,7 +18,7 @@
     │            │                │
     ▼            ▼                ▼
 ┌─────────┐  ┌────────────────┐  ┌─────────────┐
-│Embedding│  │RerankerRetriever│ │  LlamaCpp   │
+│Embedding│  │RerankerRetriever│ │  LlamaCpp    │
 ├─────────┤  ├────────────────┤  ├─────────────┤
 │• model  │  │• vectorstore   │  │• model_path │
 │         │  │• reranker      │  │• n_ctx      │
@@ -31,29 +31,29 @@
                       │ Inherits
                       ▼
             ┌──────────────────┐
-            │  BaseRetriever   │  ◄─── LangChain abstract base
-            │  (LangChain)     │
+            │  BaseRetriever    │  ◄─── LangChain Abstract Class
+            │    (LangChain)    │
             └──────────────────┘
 
 
 ┌────────────────────────────────────────────────────────────────┐
-│                        API Data Models                         │
+│                        API Data Models                          │
 ├────────────────────────────────────────────────────────────────┤
 │                                                                │
-│  ┌──────────────┐        ┌──────────────┐                     │
-│  │ChatRequest   │        │ChatResponse  │                     │
-│  ├──────────────┤        ├──────────────┤                     │
-│  │+ message: str│───────▶│+ answer: str │                     │
-│  │+ include_... │        │+ sources:[]  │                     │
-│  └──────────────┘        └──────────────┘                     │
-│                                  │                             │
-│                                  │ contains                    │
-│                                  ▼                             │
-│                          ┌──────────────┐                     │
-│                          │   Source     │                     │
-│                          ├──────────────┤                     │
-│                          │+ content:str │                     │
-│                          │+ source: str │                     │
-│                          │+ page: int?  │                     │
-│                          └──────────────┘                     │
+│  ┌──────────────┐        ┌──────────────┐                      │
+│  │ ChatRequest  │        │ ChatResponse │                      │
+│  ├──────────────┤        ├──────────────┤                      │
+│  │+ message: str│───────▶│+ answer: str │                      │
+│  │+ include_... │        │+ sources: [] │                      │
+│  └──────────────┘        └──────────────┘                      │
+│                                  │                              │
+│                                  │ Contains                     │
+│                                  ▼                              │
+│                          ┌──────────────┐                      │
+│                          │    Source     │                      │
+│                          ├──────────────┤                      │
+│                          │+ content:str │                      │
+│                          │+ source: str │                      │
+│                          │+ page: int?  │                      │
+│                          └──────────────┘                      │
 └────────────────────────────────────────────────────────────────┘
