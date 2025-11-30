@@ -57,6 +57,25 @@ class QAService:
             self._llm_overrides.update(overrides)
         self._llm = get_llm(overrides=self._llm_overrides)
 
+    def _format_history(self, history: Optional[List[Dict]], max_messages: int = 8, max_chars: int = 4000) -> str:
+        """
+        Serialize recent chat history into a plain-text block for prompting.
+        Limits message count and total length to avoid oversized prompts.
+        """
+        if not history:
+            return ""
+
+        recent = history[-max_messages:]
+        lines = []
+        for msg in recent:
+            role = msg.get("role", "user")
+            role_label = "User" if role == "user" else "Assistant"
+            content = msg.get("content", "")
+            lines.append(f"{role_label}: {content}")
+
+        joined = "\n".join(lines)
+        return joined[:max_chars]
+
     def initialize(self):
         """Initialize the service."""
         if self._initialized:
@@ -121,12 +140,14 @@ class QAService:
         }
         return merged
 
-    def ask(self, question: str) -> Dict:
+    def ask(self, question: str, history: Optional[List[Dict]] = None) -> Dict:
         """
-        Ask a question and get an answer.
+        Ask a question (optionally with chat history) and get an answer.
 
         Args:
             question: User query
+            history: Optional list of prior messages:
+                [{"role": "user"|"assistant", "content": "..."}]
 
         Returns:
             {
@@ -138,7 +159,12 @@ class QAService:
             raise RuntimeError("Service not initialized; call initialize() first.")
 
         try:
-            result = self.qa_chain({"query": question})
+            history_block = self._format_history(history)
+            query_text = question
+            if history_block:
+                query_text = f"{history_block}\nUser: {question}"
+
+            result = self.qa_chain({"query": query_text})
 
             # Clean the answer
             answer = result["result"].split("<|eot_id|>")[0].strip()

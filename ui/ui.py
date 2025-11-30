@@ -108,7 +108,7 @@ def handle_chat(prompt: str):
 
     try:
         with st.spinner("Thinking with local knowledge base..."):
-            result = service.ask(prompt)
+            result = service.ask(prompt, history=st.session_state.messages)
     except Exception as exc:  # noqa: BLE001
         st.session_state.messages.append(
             {"role": "assistant", "content": f"❌ Error: {exc}"}
@@ -176,10 +176,10 @@ st.markdown(
             background-color: var(--bg-dark);
             color: var(--text-primary);
         }
-        
+
         /* 隐藏 Streamlit 默认头部和菜单 */
         header, #MainMenu, footer {visibility: hidden;}
-        
+
         /* 减少顶部留白 */
         .block-container {
             padding-top: 1rem !important;
@@ -191,7 +191,7 @@ st.markdown(
             background-color: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
         }
-        
+
         /* 关键：将侧边栏容器改为 Flex 列布局，并撑满高度 */
         section[data-testid="stSidebar"] > div {
             height: 100vh;
@@ -199,7 +199,7 @@ st.markdown(
             flex-direction: column;
             justify-content: space-between; /* 顶底分布 */
         }
-        
+
         /* 让侧边栏上半部分(st.write区)占据剩余空间并可滚动 */
         section[data-testid="stSidebar"] > div > div:first-child {
             flex-grow: 1;
@@ -208,10 +208,10 @@ st.markdown(
         }
 
         /* --- UI 组件样式定制 --- */
-        
+
         /* 输入框 & 下拉框 */
-        .stTextInput > div > div > input, 
-        .stSelectbox > div > div > div, 
+        .stTextInput > div > div > input,
+        .stSelectbox > div > div > div,
         .stNumberInput > div > div > input,
         .stDateInput > div > div > input {
             background-color: var(--sidebar-bg) !important;
@@ -219,7 +219,7 @@ st.markdown(
             border: 1px solid var(--border-color) !important;
             border-radius: 6px;
         }
-        
+
         /* 聊天输入框容器 */
         .stChatInputContainer {
             background-color: var(--bg-dark) !important;
@@ -231,7 +231,7 @@ st.markdown(
             border: 1px solid var(--border-color) !important;
             color: white !important;
         }
-        
+
         /* Tab 标签页 */
         .stTabs [data-baseweb="tab-list"] {
             gap: 24px;
