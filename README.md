@@ -31,7 +31,7 @@ cd llama3-chatbot-hybrid
 
 ```bash
 python -m venv venv
-source venv/bin/activate    # Windows: venv\Scripts\activate
+source venv/bin/activate
 ```
 
 3) Install dependencies
@@ -56,8 +56,7 @@ Grab a GGUF file from [Hugging Face](https://huggingface.co/TheBloke/Llama-3.1-8
   --local-dir BAAI/bge-reranker-base
 
 
-6) Configure environment:w
-7)
+7) Configure environment:w
 
 ```bash
 cp .env.example .env
@@ -108,31 +107,13 @@ Python
 import requests
 
 resp = requests.post(
-    "http://localhost:7860/api/chat",
+    "http://localhost:8510/api/chat",
     json={"message": "What is the main content of the document?"}
 )
 print(resp.json()["answer"])
 ```
 
-curl
 
-```bash
-curl -X POST http://localhost:7860/api/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "What is the main content of the document?"}'
-```
-
-JavaScript
-
-```javascript
-fetch('http://localhost:7860/api/chat', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({message: 'What is the main content of the document?'})
-})
-.then(r => r.json())
-.then(data => console.log(data.answer));
-```
 
 ## ⚙️ Configuration
 
@@ -221,4 +202,45 @@ MIT License
 ---
 
 ### .gitignore highlights
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
 
+venv/
+env/
+ENV/
+
+models/**
+!models/.gitkeep
+vector_store/**
+!vector_store/.gitkeep
+data/**
+!data/.gitkeep
+sentence-transformers/**
+!sentence-transformers/.gitkeep
+BAAI/**
+!BAAI/.gitkeep
+
+
+.env
+
+logs/
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+.DS_Store
+Thumbs.db

@@ -8,12 +8,12 @@ __pycache__/
 dist/
 build/
 
-# 虚拟环境
+#virtual enviroment
 venv/
 env/
 ENV/
 
-# 大文件（不提交）
+# big files
 models/**
 !models/.gitkeep
 vector_store/**
@@ -26,10 +26,10 @@ BAAI/**
 !BAAI/.gitkeep
 
 
-# 环境变量
+# enviroment variables
 .env
 
-# 日志
+# logs
 logs/
 *.log
 
@@ -42,6 +42,6 @@ logs/
 *.swp
 *.swo
 
-# 系统文件
+# system files
 .DS_Store
 Thumbs.db
