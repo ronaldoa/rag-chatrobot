@@ -264,7 +264,7 @@ def main():
         if faiss_file.exists():
             print(f"  • Index size:      {get_file_size(str(faiss_file))}")
 
-        print("\n✓ You can now run: python app.py")
+        print("\n✓ You can now run: streamlit run ui/ui.py")
         print("="*60 + "\n")
 
     except KeyboardInterrupt:
