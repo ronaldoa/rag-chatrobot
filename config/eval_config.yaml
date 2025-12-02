@@ -1,0 +1,22 @@
+evaluation:
+  local_model: "models/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf"
+  embeddings_model: "sentence-transformers/bge-base-en-v1.5"
+
+  # Evaluation settings
+  use_llm_judge: true
+  max_samples: 100
+  timeout_seconds: 30
+
+  # Metrics to compute
+  metrics:
+    - substring_match
+    - keyword_coverage
+    - semantic_similarity
+    - word_overlap
+    - llm_judge
+
+  # Output settings
+  output_dir: "eval_results"
+  save_results: true
+  generate_report: true
+  visualize: false
