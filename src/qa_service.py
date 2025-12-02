@@ -113,6 +113,10 @@ class QAService:
         self._initialized = True
         print("✓ QA service initialized\n")
 
+        from .config import print_config
+        print_config()
+
+
     def update_llm_params(self, overrides: dict):
         """
         Update LLM parameters at runtime and rebuild the QA chain.

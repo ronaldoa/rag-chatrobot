@@ -20,43 +20,47 @@ User → Streamlit UI / API → QA Service
 
 ## 📦 Installation
 
-1) Clone the project
+1. Clone the project
 
 ```bash
 git clone <your-repo-url>
 cd llama3-chatbot-hybrid
 ```
 
-2) Create a virtual environment
+2. Create a virtual environment
 
 ```bash
 python -m venv venv
 source venv/bin/activate
 ```
 
-3) Install dependencies
+3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4) Download a model
-Grab a GGUF file from [Hugging Face](https://huggingface.co/TheBloke/Llama-3.1-8B-Instruct-GGUF):
+4. Download a model
+   Grab a GGUF file from [Hugging Face](https://huggingface.co/TheBloke/Llama-3.1-8B-Instruct-GGUF):
 
 - Recommended: `llama-3.1-8b-instruct-q4_k_m.gguf` (~4.9GB)
 - Smaller: `llama-3.1-8b-instruct-q3_k_m.gguf` (~3.3GB)
 - Higher quality: `llama-3.1-8b-instruct-q5_k_m.gguf` (~5.8GB)
 
-5)Download sentence-transformer
-- hf download sentence-transformers/paraphrase-MiniLM-L6-v2 \
-  --local-dir sentence-transformers/paraphrase-MiniLM-L6-v2
+place it in the models/ folder
+the name should be "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf"
+you can modified in the .env file.
 
-6)Download reranker
--hf download BAAI/bge-reranker-base \
-  --local-dir BAAI/bge-reranker-base
+  5)Download sentence-transformer
 
+- hf download sentence-transformers/bge-base-en-v1.5 \
+   --local-dir sentence-transformers/bge-base-en-v1.5
 
-7) Configure environment:w
+  6)Download reranker
+  -hf download BAAI/bge-reranker-base \
+   --local-dir BAAI/bge-reranker-base
+
+7. Configure environment:w
 
 ```bash
 cp .env.example .env
@@ -65,8 +69,8 @@ cp .env.example .env
 
 ## 🚀 Quick Start
 
-1) Prepare documents
-Put files in `data/`:
+1. Prepare documents
+   Put files in `data/`:
 
 ```
 data/
@@ -75,19 +79,19 @@ data/
 └── notes.docx
 ```
 
-2) Build the vector store
+2. Build the vector store
 
 ```bash
 python ingest.py
 ```
 
-3) Start the service
+3. Start the service
 
 ```bash
 streamlit run ui/ui.py
 ```
 
-4) Access
+4. Access
 
 - Web UI: <http://localhost:8501/>
 
@@ -113,21 +117,19 @@ resp = requests.post(
 print(resp.json()["answer"])
 ```
 
-
-
 ## ⚙️ Configuration
 
 Edit `.env` to adjust parameters:
 
-| Key | Description | Default |
-| --- | --- | --- |
-| `N_CTX` | Context window | 4096 |
-| `N_THREADS` | CPU threads | 8 |
-| `N_GPU_LAYERS` | GPU layers (0 = CPU only) | 0 |
-| `INITIAL_K` | FAISS coarse results | 20 |
-| `FINAL_K` | Reranker results | 3 |
-| `TEMPERATURE` | Sampling temperature | 0.7 |
-| `MAX_TOKENS` | Max generated tokens | 512 |
+| Key            | Description               | Default |
+| -------------- | ------------------------- | ------- |
+| `N_CTX`        | Context window            | 4096    |
+| `N_THREADS`    | CPU threads               | 8       |
+| `N_GPU_LAYERS` | GPU layers (0 = CPU only) | 0       |
+| `INITIAL_K`    | FAISS coarse results      | 20      |
+| `FINAL_K`      | Reranker results          | 3       |
+| `TEMPERATURE`  | Sampling temperature      | 0.7     |
+| `MAX_TOKENS`   | Max generated tokens      | 512     |
 
 ## 🔧 GPU Acceleration (optional)
 
@@ -151,11 +153,11 @@ CMAKE_ARGS="-DLLAMA_METAL=on" pip install llama-cpp-python --force-reinstall
 
 ## 📊 Performance Reference
 
-| Setup | Throughput | Memory |
-| --- | --- | --- |
-| CPU (8 cores) | 8-12 tok/s | 6-7GB |
+| Setup          | Throughput  | Memory   |
+| -------------- | ----------- | -------- |
+| CPU (8 cores)  | 8-12 tok/s  | 6-7GB    |
 | GPU (RTX 3060) | 25-30 tok/s | 6GB VRAM |
-| M1 Pro (Metal) | 15-20 tok/s | 8GB |
+| M1 Pro (Metal) | 15-20 tok/s | 8GB      |
 
 ## 🐛 FAQ
 
@@ -202,13 +204,15 @@ MIT License
 ---
 
 ### .gitignore highlights
+
 # Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
+
+**pycache**/
+_.py[cod]
+_$py.class
+_.so
 .Python
-*.egg-info/
+_.egg-info/
 dist/
 build/
 
@@ -224,23 +228,24 @@ data/**
 !data/.gitkeep
 sentence-transformers/**
 !sentence-transformers/.gitkeep
-BAAI/**
+BAAI/\*\*
 !BAAI/.gitkeep
-
 
 .env
 
 logs/
-*.log
+\*.log
 
 # Jupyter
+
 .ipynb_checkpoints/
 
 # IDE
+
 .vscode/
 .idea/
-*.swp
-*.swo
+_.swp
+_.swo
 
 .DS_Store
 Thumbs.db

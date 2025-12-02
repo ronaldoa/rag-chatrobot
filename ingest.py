@@ -13,15 +13,16 @@ Steps:
 import sys
 from pathlib import Path
 from tqdm import tqdm
+import re
 
 from langchain.document_loaders import (
     DirectoryLoader,
     TextLoader,
-    PyPDFLoader,
     Docx2txtLoader,
     CSVLoader,
     UnstructuredHTMLLoader
 )
+from langchain_community.document_loaders import PyMuPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 
@@ -42,7 +43,7 @@ logger = setup_logger()
 # Keep loader map aligned with SUPPORTED_EXTENSIONS
 LOADERS_MAP = {
     ".txt": TextLoader,
-    ".pdf": PyPDFLoader,
+    ".pdf": PyMuPDFLoader,
     ".docx": Docx2txtLoader,
     ".csv": CSVLoader,
     ".html": UnstructuredHTMLLoader,
@@ -115,6 +116,15 @@ def load_documents_by_type(data_path: str):
                     loader_kwargs=loader_kwargs
                 )
                 docs = loader.load()
+                # Basic cleanup to strip common headers/footers on PDFs
+                if loader_cls == PyMuPDFLoader:
+                    for d in docs:
+                        content = d.page_content
+                        # Remove runs of whitespace and common header patterns (page numbers, title fragments)
+                        content = re.sub(r"\s+", " ", content).strip()
+                        # Example: remove isolated page numbers or short header tokens at start
+                        content = re.sub(r"^(?:\d+\s+)?Reminiscence of a Stock Operator\s*", "", content, flags=re.IGNORECASE)
+                        d.page_content = content
                 all_documents.extend(docs)
                 logger.success(f"✓ Loaded {len(docs)} {ext} documents")
             except Exception as e:

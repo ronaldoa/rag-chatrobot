@@ -1,8 +1,6 @@
 # =========================
 # Core Web Server (Critical Fix)
 # =========================
-# 修复报错的关键：Gradio 4.x 必须配合特定版本的 FastAPI/Starlette
-# 这里的版本是经过验证的"黄金组合"，千万不要随意升级到最新版
 fastapi==0.112.2
 uvicorn[standard]==0.30.6
 starlette==0.38.2
@@ -21,7 +19,6 @@ plotly>=5.24.1
 # =========================
 # LangChain Stack (Verified Stable)
 # =========================
-# 使用真实的最新稳定版
 langchain==0.3.0
 langchain-core==0.3.5
 langchain-community==0.3.0
@@ -30,16 +27,15 @@ langchain-text-splitters==0.3.0
 # =========================
 # RAG / ML Components
 # =========================
-# 修正了你原表中不存在的版本号，改为真实的最新稳定版
-sentence-transformers==3.1.1   # 并没有 5.x 版本
-faiss-cpu==1.8.0.post1         # 并没有 1.13 版本
-llama-cpp-python==0.2.90       # 根据你的CUDA/CPU情况可能需要特定编译，0.2.90是较稳的基准
-
+sentence-transformers==3.1.1
+faiss-cpu==1.8.0.post1
+llama-cpp-python==0.2.90
 # =========================
 # Document Processing
 # =========================
-pypdf==4.3.1                   # 并没有 6.x 版本
-python-docx==1.1.2             # 并没有 1.2.x 版本
+pymupdf==1.24.11
+pypdf==4.3.1
+python-docx==1.1.2
 
 # =========================
 # Utils

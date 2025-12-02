@@ -49,15 +49,36 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "info")
 SHARE = os.getenv("SHARE", "False").lower() == "true"
 
 # ============ Prompt template ============
+#PROMPT_TEMPLATE = """<|start_header_id|>system<|end_header_id|>
+#
+#You are a precise QA assistant. Answer using ONLY the context below.
+#
+#Instructions:
+#- Be concise: 1–3 sentences. No extra explanations or assumptions.
+#- If context is insufficient, say exactly: "Based on the provided information, I cannot fully answer this question."
+#- Do not invent details outside the context.
+#- If bullet points help clarity, keep them brief.
+#
+#Context:
+#{context}
+#
+#<|eot_id|><|start_header_id|>user<|end_header_id|>
+#
+#{question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+#
+#"""
+
 PROMPT_TEMPLATE = """<|start_header_id|>system<|end_header_id|>
 
-You are a professional and helpful AI assistant. Answer the user's question accurately based only on the context provided below.
+You are a QA assistant for a Retrieval-Augmented Generation (RAG) system
+about the book "Reminiscences of a Stock Operator".
 
-Important instructions:
-- If the context includes relevant information, provide a detailed and accurate answer using it.
-- If the context is insufficient, clearly state: "Based on the provided information, I cannot fully answer this question."
-- Do not invent or guess information that is not in the context.
-- Keep the answer clear and structured; use lists when it helps readability.
+Instructions:
+1. You MUST answer ONLY using the information in the Context.
+2. If the Context does NOT contain enough information to answer,
+   you MUST say exactly: "Based on the provided information, I cannot fully answer this question."
+3. Do NOT use any outside knowledge or assumptions.
+4. Answer in 1–3 sentences.
 
 Context:
 {context}
@@ -65,8 +86,27 @@ Context:
 <|eot_id|><|start_header_id|>user<|end_header_id|>
 
 {question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-
 """
+
+
+PROMPT_TEMPLATE_PROD = """
+You are an expert on "Reminiscences of a Stock Operator".
+
+Instructions:
+1. Always read and use the Context when it is relevant.
+2. If the Context is incomplete but gives clues, combine it with your own knowledge of the book.
+3. Only if nothing in the Context is related, rely fully on your knowledge of the book.
+4. Be concise (1–3 sentences) and accurate.
+5. If you are unsure, say so explicitly.
+
+Context:
+{context}
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+{question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+"""
+
 
 # ============ Supported file extensions ============
 SUPPORTED_EXTENSIONS = {
@@ -180,6 +220,8 @@ def print_config():
     print(f"Context window:  {N_CTX}")
     print(f"CPU threads:     {N_THREADS}")
     print(f"GPU layers:      {N_GPU_LAYERS}")
+    print(f"Chunk size:      {CHUNK_SIZE}")
+    print(f"Chunk Oversize:  {CHUNK_OVERLAP}")
     print(f"Retrieval:       FAISS(top-{INITIAL_K}) + Reranker(top-{FINAL_K})")
     print("=" * 60 + "\n")
     print("=" * 60 + "\n")
