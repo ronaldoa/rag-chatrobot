@@ -18,6 +18,7 @@ from .config import (
     MAX_TOKENS,
     TOP_P,
     REPEAT_PENALTY,
+    USE_HYBRID,
 )  # Shared configuration helper
 from .embeddings import get_embeddings
 from .llm import get_llm
@@ -168,7 +169,7 @@ class QAService:
             if history_block:
                 query_text = f"{history_block}\nUser: {question}"
 
-            result = self.qa_chain({"query": query_text})
+            result = self.qa_chain.invoke({"query": query_text})
 
             # Clean the answer
             answer = result["result"].split("<|eot_id|>")[0].strip()

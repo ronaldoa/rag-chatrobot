@@ -1,0 +1,24 @@
+============================================================
+RAG EVALUATION REPORT
+============================================================
+Generated: 2025-12-02 15:56:40
+
+OVERALL
+----------------------------------------
+Total samples: 11
+Valid samples: 11
+Error samples: 0
+Error rate: 0.0%
+
+METRICS
+----------------------------------------
+Substring Match: 0.0%
+Keyword Coverage: 29.7%
+Semantic Similarity: 0.642
+Word Overlap: 0.112
+Avg Latency: 6.448s
+LLM Judge Score: 0.718
+
+BY LABEL
+----------------------------------------
+Timing: 11 samples, avg semantic: 0.642

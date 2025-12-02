@@ -30,6 +30,7 @@ langchain-text-splitters==0.3.0
 sentence-transformers==3.1.1
 faiss-cpu==1.8.0.post1
 llama-cpp-python==0.2.90
+rank-bm25==0.2.2
 # =========================
 # Document Processing
 # =========================
@@ -42,3 +43,4 @@ python-docx==1.1.2
 # =========================
 python-dotenv==1.0.1
 loguru==0.7.2
+PyYAML>=6.0

@@ -53,14 +53,14 @@ you can modified in the .env file.
 
   5)Download sentence-transformer
 
-- hf download sentence-transformers/bge-base-en-v1.5 \
+- hf download BAAI/bge-base-en-v1.5 \
    --local-dir sentence-transformers/bge-base-en-v1.5
 
   6)Download reranker
   -hf download BAAI/bge-reranker-base \
    --local-dir BAAI/bge-reranker-base
 
-7. Configure environment:w
+7. Configure environment
 
 ```bash
 cp .env.example .env

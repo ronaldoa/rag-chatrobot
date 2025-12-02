@@ -24,6 +24,7 @@ if __name__ == "__main__":
     q = "How did Livingston’s winning bucket shop method fail when he used it in a real brokerage office?"
     q1 = "Why did he need the tape to be absolutely current?"
     q2 = "When did the narrator first go to work as a quotation-board boy in a stock-brokerage office?"
+    q3 = "when did i go to work?"
     q4 = "In the episode where the narrator explains that in a brokerage office the tape was 'ancient history,' why did he say he needed the tape to be absolutely current, and how did even a small delay in the quoted price make his timing method unreliable?"
 
-    debug_one(q4)
+    debug_one(q3)

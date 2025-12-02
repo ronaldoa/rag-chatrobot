@@ -25,6 +25,11 @@ EMBEDDING_MODEL = os.getenv(
 )
 RERANKER_MODEL = os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-base")
 
+# ============ Retrieval mode ============
+USE_HYBRID = os.getenv("USE_HYBRID", "True").lower() == "true"
+# Optional weight for dense vs sparse when combining (dense_weight, sparse_weight)
+HYBRID_WEIGHTS = os.getenv("HYBRID_WEIGHTS", "0.5,0.5")
+
 # ============ LLM parameters ============
 N_CTX = int(os.getenv("N_CTX", "4096"))
 N_THREADS = int(os.getenv("N_THREADS", "8"))
@@ -68,17 +73,38 @@ SHARE = os.getenv("SHARE", "False").lower() == "true"
 #
 #"""
 
+#PROMPT_TEMPLATE = """<|start_header_id|>system<|end_header_id|>
+#
+#You are a QA assistant for a Retrieval-Augmented Generation (RAG) system
+#about the book "Reminiscences of a Stock Operator".
+#
+#Instructions:
+#1. You MUST answer ONLY using the information in the Context.
+#2. If the Context does NOT contain enough information to answer,
+#   you MUST say exactly: "Based on the provided information, I cannot fully answer this question."
+#3. Do NOT use any outside knowledge or assumptions.
+#4. Answer in 1–3 sentences.
+#
+#Context:
+#{context}
+#
+#<|eot_id|><|start_header_id|>user<|end_header_id|>
+#
+#{question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+#"""
+
 PROMPT_TEMPLATE = """<|start_header_id|>system<|end_header_id|>
 
-You are a QA assistant for a Retrieval-Augmented Generation (RAG) system
+You are a careful but practical QA assistant for a Retrieval-Augmented Generation (RAG) system
 about the book "Reminiscences of a Stock Operator".
 
-Instructions:
-1. You MUST answer ONLY using the information in the Context.
-2. If the Context does NOT contain enough information to answer,
-   you MUST say exactly: "Based on the provided information, I cannot fully answer this question."
-3. Do NOT use any outside knowledge or assumptions.
-4. Answer in 1–3 sentences.
+Guidelines:
+1. Use the Context as your ONLY source of factual information. Do NOT invent facts that are not supported by the Context.
+2. If the Context contains partial or indirect clues that are relevant to the Question, you MUST still answer as best you can,
+   inferring simple implications from the given text.
+3. ONLY IF the Context is clearly unrelated to the Question and contains no useful clues, answer exactly:
+   "Based on the provided information, I cannot fully answer this question."
+4. Answer concisely in 1–3 sentences. Do NOT mention the word "Context" or these instructions in your answer.
 
 Context:
 {context}
@@ -87,6 +113,10 @@ Context:
 
 {question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """
+
+
+
+
 
 
 PROMPT_TEMPLATE_PROD = """
@@ -222,6 +252,7 @@ def print_config():
     print(f"GPU layers:      {N_GPU_LAYERS}")
     print(f"Chunk size:      {CHUNK_SIZE}")
     print(f"Chunk Oversize:  {CHUNK_OVERLAP}")
-    print(f"Retrieval:       FAISS(top-{INITIAL_K}) + Reranker(top-{FINAL_K})")
+    retrieval_mode = "Hybrid (BM25 + FAISS + Reranker)" if USE_HYBRID else "FAISS + Reranker"
+    print(f"Retrieval:       {retrieval_mode} (top-{INITIAL_K} → rerank top-{FINAL_K})")
     print("=" * 60 + "\n")
     print("=" * 60 + "\n")
