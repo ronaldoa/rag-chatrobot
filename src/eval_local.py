@@ -34,6 +34,17 @@ except ImportError:
     SentenceTransformer = Any  # type: ignore
     util = None  # type: ignore
 
+# Optional ragas evaluation
+try:
+    from ragas import evaluate as ragas_evaluate
+    from ragas.metrics import answer_relevancy, context_precision, context_recall, faithfulness
+    from datasets import Dataset
+    RAGAS_AVAILABLE = True
+except ImportError:
+    RAGAS_AVAILABLE = False
+    ragas_evaluate = None  # type: ignore
+    answer_relevancy = context_precision = context_recall = faithfulness = None  # type: ignore
+
 from .qa_service import qa_service
 
 
@@ -42,6 +53,7 @@ DEFAULT_CONFIG = {
         "local_model": None,
         "embeddings_model": "all-MiniLM-L6-v2",
         "use_llm_judge": False,
+        "use_ragas": False,
         "limit": None,  # alias for max_samples
         "max_samples": None,
         "timeout_seconds": 30,
@@ -538,6 +550,125 @@ class LightweightRAGEvaluator:
         print(f"Report saved to: {output_path}")
 
 
+def generate_plots(results: List[Dict[str, Any]], output_dir: Path) -> None:
+    """Generate simple PNG charts from evaluation results."""
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        print("matplotlib not installed; skipping visualization")
+        return
+
+    valid = [r for r in results if "error" not in r]
+    if not valid:
+        print("No valid results to visualize")
+        return
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    def _plot_hist(metric: str, title: str, bins: int = 20) -> None:
+        vals = [r.get(metric) for r in valid if r.get(metric) is not None]
+        if not vals:
+            return
+        plt.figure()
+        plt.hist(vals, bins=bins, color="#4f46e5", alpha=0.8)
+        plt.title(title)
+        plt.xlabel(metric)
+        plt.ylabel("count")
+        plt.grid(alpha=0.2)
+        plt.tight_layout()
+        plt.savefig(output_dir / f"{metric}_hist.png")
+        plt.close()
+
+    _plot_hist("semantic_similarity", "Semantic similarity distribution")
+    _plot_hist("word_overlap", "Word overlap distribution")
+    _plot_hist("avg_relevance", "Average relevance distribution")
+    _plot_hist("latency_sec", "Latency (seconds)")
+
+    # By label bar chart if labels exist
+    labels = defaultdict(int)
+    for r in valid:
+        labels[r.get("label", "Unknown")] += 1
+    if labels:
+        plt.figure()
+        plt.bar(labels.keys(), labels.values(), color="#0ea5e9")
+        plt.title("Samples per label")
+        plt.ylabel("count")
+        plt.xticks(rotation=30, ha="right")
+        plt.tight_layout()
+        plt.savefig(output_dir / "labels.png")
+        plt.close()
+
+    print(f"Charts saved to: {output_dir}")
+
+
+def run_ragas(results: List[Dict[str, Any]], output_dir: Path) -> Dict[str, float] | None:
+    """Run ragas metrics on collected QA outputs."""
+    if not RAGAS_AVAILABLE or ragas_evaluate is None:
+        print("ragas not installed; skipping ragas evaluation")
+        return None
+
+    rows: List[Dict[str, Any]] = []
+    for r in results:
+        if "error" in r:
+            continue
+        contexts = []
+        for s in r.get("sources", []):
+            if isinstance(s, dict):
+                contexts.append(s.get("content") or s.get("text") or "")
+            else:
+                contexts.append(str(s))
+        rows.append(
+            {
+                "question": r.get("question", ""),
+                "answer": r.get("model_answer", ""),
+                "contexts": contexts or [""],
+                "ground_truth": r.get("expected_answer", ""),
+            }
+        )
+
+    if not rows:
+        print("No valid rows for ragas evaluation")
+        return None
+
+    ds = Dataset.from_list(rows)
+    metrics = [context_precision, context_recall, faithfulness, answer_relevancy]
+    print(f"Running ragas on {len(rows)} samples...")
+    try:
+        result = ragas_evaluate(
+            dataset=ds,
+            metrics=metrics,
+            llm=getattr(qa_service, "_llm", None),
+            embeddings=getattr(qa_service, "_embeddings", None),
+        )
+    except Exception as e:  # noqa: BLE001
+        print(f"ragas evaluation failed: {e}")
+        return None
+
+    scores: Dict[str, float] = {}
+    if hasattr(result, "scores"):
+        try:
+            scores = dict(result.scores)  # type: ignore[arg-type]
+        except Exception:
+            pass
+    if hasattr(result, "to_pandas"):
+        try:
+            df = result.to_pandas()
+            output_dir.mkdir(parents=True, exist_ok=True)
+            df.to_csv(output_dir / "ragas_results.csv", index=False)
+            print(f"ragas per-sample results saved to: {output_dir / 'ragas_results.csv'}")
+        except Exception as e:  # noqa: BLE001
+            print(f"Could not save ragas results: {e}")
+
+    if scores:
+        print("ragas aggregated scores:")
+        for k, v in scores.items():
+            try:
+                print(f"  {k}: {v:.3f}")
+            except Exception:
+                print(f"  {k}: {v}")
+    return scores or None
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="RAG Evaluation for Local GGUF Models",
@@ -552,6 +683,8 @@ def main() -> None:
     parser.add_argument("--embeddings", type=str, default=None, help="Sentence transformers model")
     parser.add_argument("--report", action="store_true", help="Generate summary report")
     parser.add_argument("--report-path", type=Path, default=None, help="Report output path")
+    parser.add_argument("--visualize", action="store_true", help="Generate simple metric charts")
+    parser.add_argument("--ragas", action="store_true", help="Run ragas metrics on results")
     args = parser.parse_args()
 
     cfg = load_config(args.config)
@@ -569,6 +702,8 @@ def main() -> None:
     output_csv = args.out or (output_dir / "results.csv")
     report_path = args.report_path or (output_dir / "report.txt")
     generate_report = args.report or cfg_eval.get("generate_report", True)
+    visualize = args.visualize or cfg_eval.get("visualize", False)
+    use_ragas = args.ragas or cfg_eval.get("use_ragas", False)
 
     if use_llm_judge and not local_model:
         raise ValueError("--llm-judge enabled but no local model provided in args or config")
@@ -597,17 +732,56 @@ def main() -> None:
     evaluator.save_results_csv(results, output_csv)
     if generate_report:
         evaluator.generate_report(summary, report_path)
+    if visualize:
+        generate_plots(results, output_dir)
+    if use_ragas:
+        run_ragas(results, output_dir)
 
-    print("\nQUICK SUMMARY")
-    print("=" * 40)
-    print(f"Samples: {summary.get('total_samples', 0)} (valid {summary.get('valid_samples', 0)})")
-    print(f"Substring Match: {summary.get('substring_match_rate', 0):.1%}")
-    if "avg_semantic_similarity" in summary:
-        print(f"Semantic Similarity: {summary['avg_semantic_similarity']:.3f}")
-    if summary.get("avg_llm_score") is not None:
-        print(f"LLM Judge Score: {summary['avg_llm_score']:.3f}")
-    print(f"Avg Latency: {summary.get('avg_latency', 0):.3f}s")
-    print("Evaluation complete!\n")
+    #print("\nQUICK SUMMARY")
+    #print("=" * 40)
+    #print(f"Samples: {summary.get('total_samples', 0)} (valid {summary.get('valid_samples', 0)})")
+    #print(f"Substring Match: {summary.get('substring_match_rate', 0):.1%}")
+    #if "avg_semantic_similarity" in summary:
+    #    print(f"Semantic Similarity: {summary['avg_semantic_similarity']:.3f}")
+    #if summary.get("avg_llm_score") is not None:
+    #    print(f"LLM Judge Score: {summary['avg_llm_score']:.3f}")
+    #print(f"Avg Latency: {summary.get('avg_latency', 0):.3f}s")
+    #print("Evaluation complete!\n")
+
+
+    #print("\nQUICK SUMMARY (All 22 Metrics)")
+    #print("=" * 60)
+
+    summary_fields = {
+        "Total samples": summary.get("total_samples"),
+        "Valid samples": summary.get("valid_samples"),
+        "Error samples": summary.get("error_samples"),
+        "Error rate": f"{summary.get('error_rate', 0):.1%}",
+
+        # Retrieval
+        "Avg Relevance": summary.get("avg_avg_relevance"),
+        "Max Relevance": summary.get("avg_max_relevance"),
+
+        # Answer Quality
+        "Substring Match Rate": f"{summary.get('substring_match_rate', 0):.1%}",
+        "Avg Keyword Coverage": summary.get("avg_keyword_coverage"),
+        "Avg Semantic Similarity": summary.get("avg_semantic_similarity"),
+        "Avg Word Overlap": summary.get("avg_word_overlap"),
+        "Avg Length Ratio": summary.get("avg_length_ratio", "N/A"),
+
+        # Performance
+        "Avg Latency (sec)": summary.get("avg_latency"),
+
+        # LLM Judge
+        "Avg LLM Overall Score": summary.get("avg_llm_score"),
+        "LLM Score Std": summary.get("llm_score_std", "N/A"),
+    }
+
+    for name, val in summary_fields.items():
+        print(f"{name:<30} {str(val)}")
+
+    print("=" * 60)
+
 
 
 if __name__ == "__main__":

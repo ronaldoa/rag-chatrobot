@@ -1,15 +1,18 @@
 from llama_cpp import Llama
+from pathlib import Path
 
+# 换成你自己模型的真实路径
+MODEL = "models/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf"
+
+print(">>> Loading model...")
 llm = Llama(
-    model_path="models/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
-    n_ctx=4096,
-    n_gpu_layers=-1,
+    model_path=str(Path(MODEL)),
+    n_ctx=512,
+    n_gpu_layers=35,  # 关键：显式要求把一部分层丢到 GPU
+    verbose=True,  # 关键：打开详细日志
 )
 
-out = llm(
-    "Q: What is 2 + 2?\nA:",
-    max_tokens=16,
-    temperature=0.1,
-    stop=["Q:", "\n\n"],
-)
-print(out["choices"][0]["text"])
+print(">>> Model loaded, generating...")
+out = llm("Hello", max_tokens=512)
+print(">>> Done. Output:")
+print(out)

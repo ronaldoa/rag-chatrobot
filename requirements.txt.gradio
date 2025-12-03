@@ -31,6 +31,8 @@ langchain-text-splitters==0.3.0
 sentence-transformers==3.1.1   # 并没有 5.x 版本
 faiss-cpu==1.8.0.post1         # 并没有 1.13 版本
 llama-cpp-python==0.2.90       # 根据你的CUDA/CPU情况可能需要特定编译，0.2.90是较稳的基准
+ragas>=0.1.8
+datasets>=2.20.0
 
 # =========================
 # Document Processing
@@ -43,3 +45,4 @@ python-docx==1.1.2             # 并没有 1.2.x 版本
 # =========================
 python-dotenv==1.0.1
 loguru==0.7.2
+matplotlib>=3.8.0

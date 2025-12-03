@@ -2,14 +2,15 @@
 
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 from typing import Dict, Any
-
-# Load environment variables
-load_dotenv()
+from dotenv import load_dotenv
 
 # ============ Paths ============
 BASE_DIR = Path(__file__).parent.parent
+
+# Load environment variables (prefer project .env)
+load_dotenv(BASE_DIR / ".env")
+load_dotenv()
 DATA_PATH = os.getenv("DATA_PATH", str(BASE_DIR / "data"))
 VECTOR_STORE_PATH = os.getenv("VECTOR_STORE_PATH", str(BASE_DIR / "vector_store"))
 LOG_PATH = os.getenv("LOG_PATH", str(BASE_DIR / "logs"))
@@ -32,8 +33,8 @@ HYBRID_WEIGHTS = os.getenv("HYBRID_WEIGHTS", "0.5,0.5")
 
 # ============ LLM parameters ============
 N_CTX = int(os.getenv("N_CTX", "4096"))
-N_THREADS = int(os.getenv("N_THREADS", "8"))
-N_GPU_LAYERS = int(os.getenv("N_GPU_LAYERS", "0"))
+N_THREADS = int(os.getenv("N_THREADS", "16"))
+N_GPU_LAYERS = int(os.getenv("N_GPU_LAYERS", "35"))
 N_BATCH = int(os.getenv("N_BATCH", "512"))
 TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "512"))
@@ -54,44 +55,44 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "info")
 SHARE = os.getenv("SHARE", "False").lower() == "true"
 
 # ============ Prompt template ============
-#PROMPT_TEMPLATE = """<|start_header_id|>system<|end_header_id|>
+# PROMPT_TEMPLATE = """<|start_header_id|>system<|end_header_id|>
 #
-#You are a precise QA assistant. Answer using ONLY the context below.
+# You are a precise QA assistant. Answer using ONLY the context below.
 #
-#Instructions:
-#- Be concise: 1–3 sentences. No extra explanations or assumptions.
-#- If context is insufficient, say exactly: "Based on the provided information, I cannot fully answer this question."
-#- Do not invent details outside the context.
-#- If bullet points help clarity, keep them brief.
+# Instructions:
+# - Be concise: 1–3 sentences. No extra explanations or assumptions.
+# - If context is insufficient, say exactly: "Based on the provided information, I cannot fully answer this question."
+# - Do not invent details outside the context.
+# - If bullet points help clarity, keep them brief.
 #
-#Context:
-#{context}
+# Context:
+# {context}
 #
-#<|eot_id|><|start_header_id|>user<|end_header_id|>
+# <|eot_id|><|start_header_id|>user<|end_header_id|>
 #
-#{question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+# {question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 #
-#"""
+# """
 
-#PROMPT_TEMPLATE = """<|start_header_id|>system<|end_header_id|>
+# PROMPT_TEMPLATE = """<|start_header_id|>system<|end_header_id|>
 #
-#You are a QA assistant for a Retrieval-Augmented Generation (RAG) system
-#about the book "Reminiscences of a Stock Operator".
+# You are a QA assistant for a Retrieval-Augmented Generation (RAG) system
+# about the book "Reminiscences of a Stock Operator".
 #
-#Instructions:
-#1. You MUST answer ONLY using the information in the Context.
-#2. If the Context does NOT contain enough information to answer,
+# Instructions:
+# 1. You MUST answer ONLY using the information in the Context.
+# 2. If the Context does NOT contain enough information to answer,
 #   you MUST say exactly: "Based on the provided information, I cannot fully answer this question."
-#3. Do NOT use any outside knowledge or assumptions.
-#4. Answer in 1–3 sentences.
+# 3. Do NOT use any outside knowledge or assumptions.
+# 4. Answer in 1–3 sentences.
 #
-#Context:
-#{context}
+# Context:
+# {context}
 #
-#<|eot_id|><|start_header_id|>user<|end_header_id|>
+# <|eot_id|><|start_header_id|>user<|end_header_id|>
 #
-#{question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-#"""
+# {question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+# """
 
 PROMPT_TEMPLATE = """<|start_header_id|>system<|end_header_id|>
 
@@ -113,10 +114,6 @@ Context:
 
 {question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """
-
-
-
-
 
 
 PROMPT_TEMPLATE_PROD = """
@@ -252,7 +249,9 @@ def print_config():
     print(f"GPU layers:      {N_GPU_LAYERS}")
     print(f"Chunk size:      {CHUNK_SIZE}")
     print(f"Chunk Oversize:  {CHUNK_OVERLAP}")
-    retrieval_mode = "Hybrid (BM25 + FAISS + Reranker)" if USE_HYBRID else "FAISS + Reranker"
+    retrieval_mode = (
+        "Hybrid (BM25 + FAISS + Reranker)" if USE_HYBRID else "FAISS + Reranker"
+    )
     print(f"Retrieval:       {retrieval_mode} (top-{INITIAL_K} → rerank top-{FINAL_K})")
     print("=" * 60 + "\n")
     print("=" * 60 + "\n")
