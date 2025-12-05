@@ -51,7 +51,7 @@ from .qa_service import qa_service
 DEFAULT_CONFIG = {
     "evaluation": {
         "local_model": None,
-        "embeddings_model": "all-MiniLM-L6-v2",
+        "embeddings_model": "bge-base-en-v1.5",
         "use_llm_judge": False,
         "use_ragas": False,
         "limit": None,  # alias for max_samples
@@ -109,20 +109,37 @@ class LocalLlamaJudge:
         )
         print("Model loaded successfully")
 
-    def judge_answer(self, question: str, expected: str, answer: str, context: str | None = None) -> Dict[str, Any]:
+    def judge_answer(
+        self,
+        question: str,
+        expected: str,
+        answer: str,
+        context: str | None = None,
+    ) -> Dict[str, Any]:
+        if context:
+            # 如果你有 truncate 函数可以用，没有的话可以简单切一刀
+            context = context[:12000]
+
         prompt = self._create_prompt(question, expected, answer, context)
+
         try:
             start = time.time()
             response = self.model(
                 prompt,
-                max_tokens=256,
+                max_tokens=512,
                 temperature=0.1,
-                stop=["</evaluation>", "\n\n"],
+                stop=["<|eot_id|>"],
                 echo=False,
             )
             latency = time.time() - start
+
             text = response.get("choices", [{}])[0].get("text", "") if isinstance(response, dict) else str(response)
+
+            # 调试建议：先看看模型到底输出了什么
+            # print("DEBUG raw judge output:", repr(text[:300]))
+
             scores, reason = self._parse_response(text)
+
             return {
                 "llm_scores": scores,
                 "llm_reason": reason,
@@ -130,66 +147,141 @@ class LocalLlamaJudge:
             }
         except Exception as e:  # noqa: BLE001
             return {
-                "llm_scores": {"overall": 0.0},
+                "llm_scores": {
+                    "overall": 0.0,
+                    "accuracy": 0.0,
+                    "completeness": 0.0,
+                    "faithfulness": 0.0,
+                    "clarity": 0.0,
+                },
                 "llm_reason": f"Judge error: {str(e)[:100]}",
                 "judge_latency": 0.0,
             }
 
+
+
+
+
     def _create_prompt(self, question: str, expected: str, answer: str, context: str | None) -> str:
+        context_block = context if context else "[No context was provided to the model]"
         return f"""<|start_header_id|>system<|end_header_id|>
 
-You are a professional QA system evaluator. Score each criterion from 0.0 to 1.0.
+    You are a professional QA system evaluator.
+    You MUST respond with ONLY a valid JSON object containing exactly these keys:
+    "accuracy", "completeness", "faithfulness", "clarity", "reason"
 
-Output format:
-ACCURACY: <score>
-COMPLETENESS: <score>
-FAITHFULNESS: <score>
-CLARITY: <score>
-OVERALL: <average_score>
-REASON: <brief_explanation>
+    All scores must be floats between 0.0 and 1.0.
 
-<|eot_id|><|start_header_id|>user<|end_header_id|>
+    Scoring Guidelines:
 
-QUESTION: {question}
+    1. ACCURACY (0.0-1.0): Does MODEL ANSWER match the facts in REFERENCE ANSWER?
+    - 1.0: All key facts correct
+    - 0.5: Partially correct, some errors
+    - 0.0: Wrong or missing key facts
 
-REFERENCE ANSWER: {expected}
+    2. COMPLETENESS (0.0-1.0): Does answer address all parts of the question?
+    - 1.0: Fully answers the question
+    - 0.5: Partially answers, missing details
+    - 0.0: Does not answer the question
 
-MODEL ANSWER: {answer}
+    3. FAITHFULNESS (0.0-1.0): Is EVERY claim in MODEL ANSWER supported by CONTEXT PROVIDED?
+    - 1.0: All claims directly stated or clearly implied in context
+    - 0.7: Most claims supported, minor acceptable inferences
+    - 0.3: Some claims lack context support
+    - 0.0: Major claims contradict or fabricate information not in context
 
-{f"CONTEXT PROVIDED: {context}" if context else "CONTEXT: Not provided"}
+    NOTE: If CONTEXT PROVIDED is "[No context was provided to the model]",
+    focus on ACCURACY and COMPLETENESS vs REFERENCE ANSWER.
+    In this case, you may set FAITHFULNESS to a neutral value (e.g., around 0.5)
+    if the answer is plausible and consistent with the REFERENCE ANSWER.
 
-Please evaluate the MODEL ANSWER based on the REFERENCE ANSWER and CONTEXT (if provided).<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+    ⚠️ CRITICAL RULES:
+    - If MODEL ANSWER says "did not say/mention/state" or directly denies something:
+      Check if the CONTEXT actually contains contradicting information.
+      If not, score FAITHFULNESS ≤ 0.3
+    - Fabricated quotes or specific facts not in CONTEXT → score 0.0-0.3
+    - Reasonable paraphrasing of CONTEXT → score 0.9-1.0
 
-EVALUATION:
-"""
+    4. CLARITY (0.0-1.0): Is the answer well-organized and easy to understand?
+    - 1.0: Very clear and well-structured
+    - 0.5: Somewhat clear but could be better
+    - 0.0: Confusing or incoherent
+
+
+    Example Output:
+    {{
+        "accuracy": 0.9,
+        "completeness": 0.8,
+        "faithfulness": 0.9,
+        "clarity": 1.0,
+        "reason": "Answer is accurate and complete, and all claims are supported by the context."
+    }}
+
+    <|eot_id|><|start_header_id|>user<|end_header_id|>
+
+    QUESTION:
+    {question}
+
+    REFERENCE ANSWER:
+    {expected}
+
+    MODEL ANSWER:
+    {answer}
+
+    CONTEXT PROVIDED:
+    {context_block}
+
+    Evaluate the MODEL ANSWER. Output ONLY the JSON object, no other text.
+    <|eot_id|><|start_header_id|>assistant<|end_header_id|>
+    """
+
 
     def _parse_response(self, text: str) -> Tuple[Dict[str, float], str]:
-        scores: Dict[str, float] = {}
-        patterns = {
-            "accuracy": r"ACCURACY\s*[:=]\s*([0-9]*\.?[0-9]+)",
-            "completeness": r"COMPLETENESS\s*[:=]\s*([0-9]*\.?[0-9]+)",
-            "faithfulness": r"FAITHFULNESS\s*[:=]\s*([0-9]*\.?[0-9]+)",
-            "clarity": r"CLARITY\s*[:=]\s*([0-9]*\.?[0-9]+)",
-            "overall": r"OVERALL\s*[:=]\s*([0-9]*\.?[0-9]+)",
+        # 默认值
+        scores = {
+            "accuracy": 0.0,
+            "completeness": 0.0,
+            "faithfulness": 0.0,
+            "clarity": 0.0,
+            "overall": 0.0,
         }
-        for key, pattern in patterns.items():
-            match = re.search(pattern, text, re.IGNORECASE)
-            if match:
-                try:
-                    scores[key] = float(match.group(1))
-                except ValueError:
-                    scores[key] = 0.0
+        reason = "Parse error: no JSON parsed"
 
-        reason_match = re.search(r"REASON\s*[:=]\s*(.+)", text, re.IGNORECASE | re.DOTALL)
-        reason = reason_match.group(1).strip() if reason_match else ""
+        try:
+            # 1) 尝试从输出中抓出 JSON 块
+            json_match = re.search(r"\{.*?\}", text, re.DOTALL)
+            candidate = None
 
-        if "overall" not in scores and scores:
-            scores["overall"] = round(sum(scores.values()) / len(scores), 3)
+            if json_match:
+                candidate = json_match.group(0).strip()
+            else:
+                # 2) 兜底：有些模型可能只输出了 JSON body，没有外层 {}
+                stripped = text.strip()
+                if stripped.startswith('"accuracy"') or stripped.startswith("'accuracy'"):
+                    candidate = "{" + stripped.rstrip(", \n") + "}"
 
-        for k in scores:
-            scores[k] = max(0.0, min(1.0, scores[k]))
+            if not candidate:
+                reason = f"No JSON found. Raw: {text[:200]!r}"
+                return scores, reason
 
-        return scores, reason[:200]
+            data = json.loads(candidate)
+
+            for key in ["accuracy", "completeness", "faithfulness", "clarity"]:
+                if key in data:
+                    try:
+                        scores[key] = float(data[key])
+                    except Exception:
+                        pass
+
+            vals = [scores[k] for k in ["accuracy", "completeness", "faithfulness", "clarity"]]
+            scores["overall"] = round(sum(vals) / len(vals), 3)
+            reason = data.get("reason", f"Parsed successfully. Raw: {candidate[:120]!r}")
+            return scores, reason
+
+        except Exception as e:
+            reason = f"JSON Parse Error: {str(e)} | Raw: {text[:200]!r}"
+            return scores, reason
+
 
 
 class LightweightRAGEvaluator:
@@ -355,7 +447,7 @@ class LightweightRAGEvaluator:
                     (s.get("text") or s.get("content") or "") if isinstance(s, dict) else str(s)
                     for s in sources
                 )
-                judge = self.llm_judge.judge_answer(question, expected, answer, context_text[:1000])
+                judge = self.llm_judge.judge_answer(question, expected, answer, context_text)
                 result.update(
                     {
                         "llm_overall": judge.get("llm_scores", {}).get("overall", 0.0),

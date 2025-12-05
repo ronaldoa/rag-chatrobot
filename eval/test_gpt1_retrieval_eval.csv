@@ -1,0 +1,40 @@
+label,question,answer,page,hit_at_1,hit_at_3,hit_at_5,first_hit_rank,retrieved_pages_top10
+Timing,Why did Livingston say he never asked the tape for reasons?,Because the tape only tells what is happening; reasons come after the move.,136,False,False,False,-1,10;134;195;202;16
+Timing,What does Livingston say happens if a trader waits for explanations?,He misses the move because explanations appear after the price has already moved.,136,False,False,False,-1,337;129;202;226;184
+Timing,Why did Livingston think explanations were useless for trading?,Because the price had already discounted the news before explanations appeared.,136,False,True,True,2,337;136;184;183;14
+Timing,What example does Livingston give of news following price?,The Hollow Tube drop before the official dividend announcement.,136,False,False,False,-1,224;200;227;129;331
+Timing,Why did Hollow Tube drop before the dividend news?,Because insiders knew and either sold early or avoided buying,136,False,False,False,-1,10;332;335;323;137
+Timing,Why was there no insider buying in Hollow Tube?,Because those who knew the truth refused to buy in a bull market.,136,False,False,False,-1,10;335;309;247;308
+Timing,Why did Livingston say stock tables in newspapers were unreliable?,Because they often differed by several points from the real market price.,26,False,False,False,-1,129;336;317;186;184
+Timing,What defect did Livingston find in tape reading in brokerage offices?,The printed tape lagged behind the real floor price.,26,False,False,False,-1,16;45;135;102;136
+Timing,Why did Livingston care about even a small price delay?,Because it ruined his timing method which depended on precise prices.,26,False,False,False,-1,317;337;50;336;163
+Timing,What advantage did bucket shop trading give Livingston?,He could act instantly on tape fluctuations.,26,False,False,False,-1,51;20;56;16;36
+Timing,Why couldn't Livingston use bucket-shop methods in real markets?,Because real market execution lagged and prices were not the same as ticker prices.,26,False,False,False,-1,279;45;16;53;20
+Timing,What was Livingston’s method for spotting price repetitions?,He compared his predictions with the tape and looked for repeating behaviors.,10,False,False,False,-1,16;68;136;340;227
+Timing,How did Livingston train himself to observe patterns?,By keeping notes and reviewing his observations daily.,10,False,False,False,-1,242;243;136;68;242
+Timing,What did Livingston say about superficial tape readers?,They buy or sell prematurely because they misread temporary fluctuations.,135,False,False,False,-1,158;136;166;134;324
+Timing,Why did Livingston think studying the tape was essential?,Because every movement meant something and had a cause.,135,False,False,False,-1,136;290;134;11;141
+Timing,Why did Livingston dislike “cheap stock” buying?,Because stocks are cheap for a reason and often go even lower.,136,False,False,False,-1,336;309;129;317;184
+Timing,What did Livingston say about asking “why” prices move?,That it was pointless; the tape tells you all you need to know.,136,False,False,False,-1,129;16;183;336;186
+Timing,Why did Livingston say the market doesn't wait?,Because traders must act instantly; delay equals loss.,136,False,True,True,2,336;136;129;337;184
+Timing,Why did many traders lose money according to Livingston?,Because they waited for reasons instead of acting on the tape.,136,False,False,False,-1,337;188;184;50;336
+Timing,Why does Livingston say reasons appear too late?,Because they come out after the price has already moved.,136,False,True,True,2,184;136;337;50;195
+Timing,What did Livingston learn from repeated market behavior?,That patterns repeat because human nature does not change.,10,False,False,False,-1,16;136;198;158;227
+Timing,Why did price patterns become obvious to him?,Because he studied them long enough to see the repetitions.,10,False,False,False,-1,136;68;218;67;16
+Timing,What did Livingston observe about manipulation news?,That news often comes after insiders have already acted.,136,False,False,False,-1,282;279;158;280;227
+Timing,Why did Livingston avoid acting on rumors?,Because the tape was more reliable than rumors or explanations.,101,False,False,False,-1,227;317;158;50;184
+Timing,Why did Livingston distrust pool explanations?,Because they often justified moves that had already happened.,167,False,False,False,-1,111;337;336;317;53
+Timing,Why did Livingston advise against fixed opinions?,Because the market punishes those who refuse to stay flexible.,138,False,False,False,-1,195;50;183;227;163
+Timing,Why did Livingston emphasize flexibility?,Because unexpected moves require quick adjustment.,138,False,False,False,-1,158;50;195;183;167
+Timing,What did Livingston say about possessions and views?,That a trader must not let his holdings influence his judgment.,101,False,False,False,-1,195;169;30;158;168
+Timing,Why did Livingston warn against “hope” in trading?,Because hope causes delays that cost money.,136,False,False,True,4,129;184;183;136;145
+Timing,Why did he dislike traders asking “What do you think?”?,Because it meant they had no conviction and wanted reassurance.,101,False,False,False,-1,126;92;198;329;16
+Timing,Why did Livingston refuse to blame specialists?,Because losing money was his own fault for trading badly.,195,False,True,True,2,215;195;183;50;166
+Timing,What did Livingston say about losses?,That they were tuition fees—necessary for learning.,10,False,False,False,-1,129;158;195;188;16
+Timing,Why did Livingston say traders must avoid pride?,Because pride prevents them from cutting losses.,10,False,False,False,-1,211;341;184;221;129
+Timing,Why did Livingston consider certain traders “weak”?,"Because they acted on emotions, not the tape.",10,False,False,False,-1,136;61;169;197;227
+Timing,Why did Livingston say the public is often wrong?,Because they buy on hope and sell on fear.,136,False,False,False,-1,215;201;195;337;340
+Timing,Why did Livingston think tape reading is a profession?,Because it requires lifelong study and discipline.,135,False,True,True,3,136;11;135;198;105
+Timing,Why did he say many traders are doomed?,Because they ignore the message of the tape and rely on opinions.,136,False,True,True,2,243;136;328;145;16
+Timing,Why did Livingston trust price action over advice?,Because he believed prices reflect true conditions sooner than talk.,101,False,False,False,-1,317;227;136;186;227
+Timing,Why did Livingston say markets teach humility?,Because the market punishes arrogance and rewards discipline.,10,False,False,False,-1,68;169;16;158;184

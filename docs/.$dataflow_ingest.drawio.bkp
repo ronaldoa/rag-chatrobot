@@ -1,0 +1,459 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17" pages="3">
+  <diagram name="Document Ingestion Pipeline" id="6D5v5jXNDb9j5ODvKpdd">
+    <mxGraphModel dx="1434" dy="907" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="rXYALvL_C51sKu1kLgJb-1" value="Document Ingestion &amp; Vectorization Pipeline" style="rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontStyle=1;fillColor=#fa709a;strokeColor=#fee140;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="760" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-2" value="Start: python ingest.py" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#fa709a;strokeColor=#fee140;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="350" y="140" width="460" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-2" target="rXYALvL_C51sKu1kLgJb-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-4" value="Step 1: Environment Check&#xa;&#xa;validate_env()&#xa;&#xa;Verify required dependencies, API keys,&#xa;and system configuration" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="300" y="250" width="560" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-4" target="rXYALvL_C51sKu1kLgJb-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-6" value="Step 2: Scan data/ Directory&#xa;&#xa;scan_documents()&#xa;&#xa;Recursively find all supported document formats&#xa;(.txt, .pdf, .docx)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="300" y="400" width="560" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-8" value=".txt Files&#xa;&#xa;TextLoader&#xa;&#xa;Plain text documents" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#a8edea;strokeColor=#00d2ff;" vertex="1" parent="1">
+          <mxGeometry x="200" y="650" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-9" value=".pdf Files&#xa;&#xa;PyPDFLoader&#xa;&#xa;PDF documents" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#a8edea;strokeColor=#00d2ff;" vertex="1" parent="1">
+          <mxGeometry x="480" y="650" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-10" value=".docx Files&#xa;&#xa;Docx2txtLoader&#xa;&#xa;Word documents" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#a8edea;strokeColor=#00d2ff;" vertex="1" parent="1">
+          <mxGeometry x="760" y="650" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-6" target="rXYALvL_C51sKu1kLgJb-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-6" target="rXYALvL_C51sKu1kLgJb-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-6" target="rXYALvL_C51sKu1kLgJb-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-14" value="Step 3: Merge All Loaded Documents&#xa;&#xa;documents = [doc1, doc2, doc3, ...]&#xa;&#xa;Consolidate all documents into a single collection" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#ffecd2;strokeColor=#fcb69f;" vertex="1" parent="1">
+          <mxGeometry x="300" y="810" width="560" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.2;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-8" target="rXYALvL_C51sKu1kLgJb-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-9" target="rXYALvL_C51sKu1kLgJb-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.8;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-10" target="rXYALvL_C51sKu1kLgJb-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-14" target="rXYALvL_C51sKu1kLgJb-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-19" value="Step 4: Document Chunking&#xa;&#xa;RecursiveCharacterTextSplitter&#xa;&#xa;chunk_size = 1000&#xa;chunk_overlap = 200" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="300" y="960" width="560" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-19" target="rXYALvL_C51sKu1kLgJb-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-21" value="Generated Text Chunks (~1000 chunks)&#xa;&#xa;texts = [{content: &quot;...&quot;}, {content: &quot;...&quot;}, ...]" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#f8f9fa;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1130" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-21" target="rXYALvL_C51sKu1kLgJb-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-23" value="Step 5: Load Embedding Model&#xa;&#xa;get_embeddings()&#xa;&#xa;Model: paraphrase-MiniLM-L6-v2&#xa;Converts text into 384-dimensional vectors" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#d4fc79;strokeColor=#96e6a1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1260" width="560" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-23" target="rXYALvL_C51sKu1kLgJb-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-25" value="Step 6: Batch Embedding Processing&#xa;&#xa;for batch in chunks(texts, batch_size=100):&#xa;    vectors = model.encode(batch)&#xa;    all_vectors.extend(vectors)&#xa;&#xa;Process 100 texts per batch" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#89f7fe;strokeColor=#66a6ff;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1430" width="560" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-25">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="1650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-27" value="Text Chunk 1&#xa;&quot;Llama 3 is...&quot;&#xa;↓&#xa;[0.23, -0.45, 0.67, ...]&#xa;&#xa;384 dimensions" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e0c3fc;strokeColor=#8ec5fc;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1650" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-28" value="Text Chunk 2&#xa;&quot;Performance...&quot;&#xa;↓&#xa;[0.18, -0.52, 0.71, ...]&#xa;&#xa;384 dimensions" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e0c3fc;strokeColor=#8ec5fc;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="640" y="1650" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-25" target="rXYALvL_C51sKu1kLgJb-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-25" target="rXYALvL_C51sKu1kLgJb-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-31" value="Step 7: Create FAISS Index&#xa;&#xa;FAISS.from_documents()&#xa;&#xa;Index Type: IndexFlatIP&#xa;(Inner-Product Similarity)&#xa;&#xa;Build efficient similarity search structure" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#fbc2eb;strokeColor=#a6c1ee;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1820" width="560" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-27" target="rXYALvL_C51sKu1kLgJb-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-28" target="rXYALvL_C51sKu1kLgJb-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-31" target="rXYALvL_C51sKu1kLgJb-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-35" value="Step 8: Save to Disk&#xa;&#xa;vectorstore.save_local()&#xa;&#xa;Persisting Vector Store" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#ffecd2;strokeColor=#fcb69f;" vertex="1" parent="1">
+          <mxGeometry x="300" y="2010" width="560" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-36" value="index.faiss&#xa;&#xa;FAISS vector index&#xa;containing all embeddings" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#fff5e6;strokeColor=#e67e22;" vertex="1" parent="1">
+          <mxGeometry x="320" y="2160" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-37" value="index.pkl&#xa;&#xa;Metadata and&#xa;document mappings" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#fff5e6;strokeColor=#e67e22;" vertex="1" parent="1">
+          <mxGeometry x="600" y="2160" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-35" target="rXYALvL_C51sKu1kLgJb-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-35" target="rXYALvL_C51sKu1kLgJb-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-40" value="Done! Vector Store Successfully Built&#xa;&#xa;Run: python app.py" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#84fab0;strokeColor=#8fd3f4;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="300" y="2300" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-36" target="rXYALvL_C51sKu1kLgJb-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rXYALvL_C51sKu1kLgJb-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rXYALvL_C51sKu1kLgJb-37" target="rXYALvL_C51sKu1kLgJb-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="0XxyGClt7Ehd8lm-Euq3" name="第 2 页">
+    <mxGraphModel dx="1674" dy="907" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-40" value="Llama 3 Chatbot System&#xa;(Streamlit + FastAPI Hybrid Architecture)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fontStyle=1;fillColor=#667eea;strokeColor=#764ba2;fontColor=#FFFFFF;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="1000" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-41" value="User Layer" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fontStyle=1;fillColor=#e3f2fd;strokeColor=#1976d2;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="160" width="1000" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-42" value="🌐 Web Browser&#xa;&#xa;localhost:8501/&#xa;&#xa;Streamlit UI" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#bbdefb;strokeColor=#1976d2;align=center;" vertex="1" parent="1">
+          <mxGeometry x="240" y="240" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-43" value="📱 Mobile App&#xa;&#xa;API Clients&#xa;&#xa;iOS/Android" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#bbdefb;strokeColor=#1976d2;align=center;" vertex="1" parent="1">
+          <mxGeometry x="600" y="240" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-44" value="🤖 Discord Bot&#xa;&#xa;Third-Party&#xa;Integrations&#xa;&#xa;External Services" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#bbdefb;strokeColor=#1976d2;align=center;" vertex="1" parent="1">
+          <mxGeometry x="960" y="240" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-45" value="Application Layer" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fontStyle=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="420" width="1000" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-46" value="FastAPI (app.py)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=2;fontColor=#7b1fa2;" vertex="1" parent="1">
+          <mxGeometry x="600" y="480" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-47" value="Streamlit Interface&#xa;(ui/)&#xa;&#xa;• ChatInterface&#xa;• UI Components&#xa;• Example Prompts&#xa;• Session Management" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1bee7;strokeColor=#7b1fa2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="280" y="530" width="280" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-48" value="REST API Routes&#xa;(api/)&#xa;&#xa;POST /api/chat&#xa;GET  /api/health&#xa;POST /api/documents/upload&#xa;GET  /api/documents/list" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1bee7;strokeColor=#7b1fa2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="840" y="530" width="280" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#1976d2;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-42" target="m_3-7HTyluC3tCNbI5vh-47">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="460" y="300" />
+              <mxPoint x="460" y="445" />
+              <mxPoint x="420" y="445" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#1976d2;entryX=0.286;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="m_3-7HTyluC3tCNbI5vh-48">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="800" y="300" as="sourcePoint" />
+            <mxPoint x="1020" y="470" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="920" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#1976d2;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-44" target="m_3-7HTyluC3tCNbI5vh-48">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="300" />
+              <mxPoint x="1170" y="445" />
+              <mxPoint x="980" y="445" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-52" value="QA Service (Core)&#xa;(src/qa_service.py)&#xa;&#xa;• initialize()&#xa;• ask(question)&#xa;• health_check()&#xa;• get_context()&#xa;• format_response()" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#ce93d8;strokeColor=#7b1fa2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="720" width="400" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#7b1fa2;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-47" target="m_3-7HTyluC3tCNbI5vh-52">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#7b1fa2;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-48" target="m_3-7HTyluC3tCNbI5vh-52">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-55" value="Business Logic Layer" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fontStyle=1;fillColor=#fff3e0;strokeColor=#ef6c00;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="900" width="1000" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-56" value="Embeddings&#xa;(src/)&#xa;&#xa;• get_embeddings()&#xa;• MiniLM-L6-v2&#xa;• Text → Vector&#xa;• 384 dimensions&#xa;• Sentence Transformer" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffe0b2;strokeColor=#ef6c00;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="240" y="980" width="240" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-57" value="Retriever&#xa;(src/)&#xa;&#xa;• RerankerRetriever&#xa;• Two-Stage Search&#xa;• FAISS + CrossEncoder&#xa;• Top-K Selection&#xa;• Context Ranking" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffe0b2;strokeColor=#ef6c00;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="580" y="980" width="240" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-58" value="LLM&#xa;(src/)&#xa;&#xa;• get_llm()&#xa;• LlamaCpp&#xa;• Llama 3.1 8B&#xa;• Temperature Control&#xa;• Token Generation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffe0b2;strokeColor=#ef6c00;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="920" y="980" width="240" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-52" target="m_3-7HTyluC3tCNbI5vh-56">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-52" target="m_3-7HTyluC3tCNbI5vh-57">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-61" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#ef6c00;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-52" target="m_3-7HTyluC3tCNbI5vh-58">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-62" value="Data / Model Layer" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fontStyle=1;fillColor=#e8f5e9;strokeColor=#2e7d32;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1200" width="1000" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-63" value="Sentence&#xa;Transformers&#xa;&#xa;Text → Embedding&#xa;(384-dims)&#xa;&#xa;Pre-trained Model" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#c8e6c9;strokeColor=#2e7d32;align=center;" vertex="1" parent="1">
+          <mxGeometry x="260" y="1290" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-64" value="FAISS Vector&#xa;Database&#xa;&#xa;• index.faiss&#xa;• index.pkl&#xa;&#xa;Vector Store" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#c8e6c9;strokeColor=#2e7d32;align=center;" vertex="1" parent="1">
+          <mxGeometry x="600" y="1290" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-65" value="GGUF Model&#xa;File&#xa;&#xa;• llama-3.1-8b...&#xa;• 4.9GB&#xa;&#xa;Quantized Weights" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#c8e6c9;strokeColor=#2e7d32;align=center;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1290" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-66" value="CrossEncoder&#xa;(Reranker)&#xa;&#xa;• bge-reranker-base&#xa;• Re-Ranking&#xa;• Semantic Scoring" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#a5d6a7;strokeColor=#2e7d32;align=center;" vertex="1" parent="1">
+          <mxGeometry x="260" y="1450" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-67" value="Document Store&#xa;(Raw Docs)&#xa;&#xa;data/ directory&#xa;(.txt / .pdf / .docx)&#xa;Source Files" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#a5d6a7;strokeColor=#2e7d32;align=center;" vertex="1" parent="1">
+          <mxGeometry x="600" y="1450" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-68" value="LlamaCpp&#xa;Engine (C++)&#xa;&#xa;• Inference Core&#xa;• KV Cache&#xa;• CPU Optimization" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#a5d6a7;strokeColor=#2e7d32;align=center;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1450" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#2e7d32;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-56" target="m_3-7HTyluC3tCNbI5vh-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#2e7d32;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-57" target="m_3-7HTyluC3tCNbI5vh-64">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#2e7d32;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-58" target="m_3-7HTyluC3tCNbI5vh-65">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-72" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#2e7d32;dashed=1;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-63" target="m_3-7HTyluC3tCNbI5vh-66">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-73" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#2e7d32;dashed=1;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-64" target="m_3-7HTyluC3tCNbI5vh-67">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-74" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#2e7d32;dashed=1;" edge="1" parent="1" source="m_3-7HTyluC3tCNbI5vh-65" target="m_3-7HTyluC3tCNbI5vh-68">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-76" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1600" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-77" value="" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#1976d2;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="220" y="1640" as="sourcePoint" />
+            <mxPoint x="280" y="1640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-78" value="Main Data Flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="290" y="1628" width="100" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-79" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#2e7d32;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="220" y="1680" as="sourcePoint" />
+            <mxPoint x="280" y="1680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-80" value="Dependencies" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="290" y="1668" width="100" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-81" value="System Information&#xa;&#xa;• Framework: FastAPI + Streamlit&#xa;• Model: Llama 3.1 8B (GGUF)&#xa;• Embedding: MiniLM-L6-v2 (384d)&#xa;• Vector DB: FAISS (IndexFlatIP)&#xa;• Reranker: bge-reranker-base&#xa;• Language: Python 3.10+&#xa;• Runtime: CPU (llama.cpp)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff9e6;strokeColor=#f39c12;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="600" y="1600" width="300" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3-7HTyluC3tCNbI5vh-82" value="Key Features&#xa;&#xa;✓ Hybrid UI (Web + API)&#xa;✓ Two-Stage Retrieval&#xa;✓ Context Reranking&#xa;✓ Local LLM Inference&#xa;✓ Document Upload&#xa;✓ Chat History&#xa;✓ Real-time Streaming" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#e8f5e9;strokeColor=#2e7d32;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="960" y="1600" width="240" height="190" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="2kz6E5xepBMhZG9szLFo" name="第 3 页">
+    <mxGraphModel dx="2501" dy="907" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-1" value="Full Q&amp;A Pipeline — From Question to Final Answer" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="260" width="760" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-2" value="User Input:&#xa;&quot;How does Llama 3 perform on code generation tasks?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="70" y="360" width="560" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-2" target="kNRDI_gHRE09fFuAhu-Z-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-4" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="330" y="460" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-5" value="Gradio UI&#xa;ui/gradio_chat&#xa;chat_function()" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="70" y="540" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-6" value="API Request&#xa;api/chat.py&#xa;POST /api/chat" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="430" y="540" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-4" target="kNRDI_gHRE09fFuAhu-Z-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-4" target="kNRDI_gHRE09fFuAhu-Z-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-9" value="QA Service&#xa;qa_service.ask(question)&#xa;&#xa;Core Orchestration Logic" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="150" y="680" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-5" target="kNRDI_gHRE09fFuAhu-Z-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-6" target="kNRDI_gHRE09fFuAhu-Z-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-12" value="Phase 1: Retrieve Relevant Documents" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="820" width="760" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-9" target="kNRDI_gHRE09fFuAhu-Z-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-14" value="Step 1: Query Embedding&#xa;embeddings.embed_query()&#xa;&#xa;Input: &quot;Llama 3 in code generation&quot;&#xa;Output: query_vector&#xa;[0.12, -0.34, 0.56, ...]&#xa;(384-dim vector)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#cce5ff;strokeColor=#36393d;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="70" y="920" width="560" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-12" target="kNRDI_gHRE09fFuAhu-Z-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-16" value="Step 2: FAISS Retrieval (Coarse)&#xa;vectorstore.similarity_search()&#xa;&#xa;Algorithm: Cosine similarity&#xa;similarity = cosine(query, docs)&#xa;&#xa;Returns: top-20 candidate docs" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#cce5ff;strokeColor=#36393d;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1090" width="560" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-14" target="kNRDI_gHRE09fFuAhu-Z-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-18" value="Document 5&#xa;Score: 0.78&#xa;Rank: 5" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1260" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-19" value="Document 12&#xa;Score: 0.92&#xa;Rank: 1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="430" y="1260" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-20" value="..." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="1280" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-16" target="kNRDI_gHRE09fFuAhu-Z-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-16" target="kNRDI_gHRE09fFuAhu-Z-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-23" value="Step 3: Reranker (Fine Ranking)&#xa;reranker.predict(pairs)&#xa;&#xa;Input:&#xa;  [(question, doc5 text),&#xa;   (question, doc12 text), ...]&#xa;&#xa;CrossEncoder Deep Understanding:&#xa;• Analyze semantic relation&#xa;• Not only similarity, but relevance&#xa;• Re-score all pairs" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#cce5ff;strokeColor=#36393d;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1390" width="560" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-18" target="kNRDI_gHRE09fFuAhu-Z-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-19" target="kNRDI_gHRE09fFuAhu-Z-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-26" value="Reranking Results:&#xa;&#xa;1. Document 12  Score: 0.94 ⭐⭐⭐&#xa;   &quot;On HumanEval benchmark...&quot;&#xa;&#xa;2. Document 5   Score: 0.87 ⭐⭐&#xa;   &quot;Code generation with Llama 3...&quot;&#xa;&#xa;3. Document 3   Score: 0.81 ⭐&#xa;   &quot;Llama 3.1 supports...&quot;&#xa;&#xa;Keep top-3" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1620" width="560" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-23" target="kNRDI_gHRE09fFuAhu-Z-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-28" value="Phase 2: Generate Final Answer" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="1880" width="760" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-26" target="kNRDI_gHRE09fFuAhu-Z-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-30" value="Step 4: Construct Prompt&#xa;PromptTemplate.format()&#xa;&#xa;Constructed Prompt:&#xa;&quot;&quot;&quot;&#xa;&lt;|begin_of_text|&gt;&#xa;&lt;|start_header_id|&gt;system...&#xa;&#xa;You are an AI assistant. Use the&#xa;following context to answer:&#xa;&#xa;Context:&#xa;[Document 12 text]&#xa;[Document 5 text]&#xa;[Document 3 text]&#xa;&#xa;&lt;|start_header_id|&gt;user...&#xa;How does Llama 3 perform on&#xa;code generation tasks?&#xa;&#xa;&lt;|start_header_id|&gt;assistant...&#xa;&quot;&quot;&quot;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1980" width="560" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-28" target="kNRDI_gHRE09fFuAhu-Z-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-32" value="Step 5: LlamaCpp Tokenization&#xa;(Built into GGUF model)&#xa;&#xa;Text → Token IDs&#xa;&quot;Llama 3...&quot; → [123, 456, ...]" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="70" y="2350" width="560" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-30" target="kNRDI_gHRE09fFuAhu-Z-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-34" value="Step 6: LlamaCpp Inference Engine&#xa;llm(prompt)&#xa;&#xa;C++ Inference Loop:&#xa;┌────────────────────────┐&#xa;│ while not end_token:   │&#xa;│   1. Forward pass      │&#xa;│      • Matrix mult     │&#xa;│      • Attention       │&#xa;│      • LayerNorm       │&#xa;│   2. Sample next token │&#xa;│      • temperature=0.7 │&#xa;│      • top_p=0.95      │&#xa;│   3. Append to output  │&#xa;│   4. Update KV cache   │&#xa;└────────────────────────┘&#xa;&#xa;Generation Speed: ~10 tokens/sec&#xa;(CPU mode)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="70" y="2500" width="560" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-32" target="kNRDI_gHRE09fFuAhu-Z-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-36" value="Generated Token Sequence:&#xa;[234, 567, 890, 123, 456, ...]&#xa;&#xa;Token-by-token streaming" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffe6cc;strokeColor=#d79b00;align=center;" vertex="1" parent="1">
+          <mxGeometry x="70" y="2830" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-34" target="kNRDI_gHRE09fFuAhu-Z-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-38" value="Step 7: Detokenization&#xa;(Token IDs → Text)&#xa;&#xa;[234, 567, ...] → &quot;Based on the...&quot;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="70" y="2960" width="560" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-36" target="kNRDI_gHRE09fFuAhu-Z-38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-40" value="Step 8: Post-processing&#xa;LangChain Post-Processing&#xa;&#xa;• Remove special tokens&#xa;  (&lt;|eot_id|&gt;, &lt;|begin_of_text|&gt;)&#xa;• Clean extra spaces&#xa;• Extract source references" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="70" y="3100" width="560" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-38" target="kNRDI_gHRE09fFuAhu-Z-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-42" value="Final Output" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="3270" width="760" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-40" target="kNRDI_gHRE09fFuAhu-Z-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-44" value="Final Answer:&#xa;&#xa;&quot;Based on the provided context,&#xa;Llama 3.1 performs strongly on&#xa;code generation tasks. On the&#xa;HumanEval benchmark, the 8B model&#xa;achieves a pass@1 score of 68.4%,&#xa;outperforming most open-source&#xa;models of similar size. It shows&#xa;strong accuracy in generating&#xa;Python and JavaScript code with&#xa;improved quality and correctness.&quot;&#xa;&#xa;Sources:&#xa;• llama3_benchmark.pdf (page 15)&#xa;• technical_report.txt" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="70" y="3370" width="560" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-42" target="kNRDI_gHRE09fFuAhu-Z-44">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-46" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="330" y="3660" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-44" target="kNRDI_gHRE09fFuAhu-Z-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-48" value="Streamlit Display&#xa;&#xa;UI shows:&#xa;• Answer&#xa;• Source links&#xa;• Feedback buttons" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="20" y="3750" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-49" value="API JSON Output&#xa;&#xa;{&#xa;  &quot;answer&quot;: &quot;...&quot;,&#xa;  &quot;sources&quot;: [],&#xa;  &quot;metadata&quot;: {}&#xa;}" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="460" y="3750" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-46" target="kNRDI_gHRE09fFuAhu-Z-48">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kNRDI_gHRE09fFuAhu-Z-51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="kNRDI_gHRE09fFuAhu-Z-46" target="kNRDI_gHRE09fFuAhu-Z-49">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -50,7 +50,7 @@ def ensure_state(defaults: Dict):
         [
             {
                 "role": "assistant",
-                "content": "你好，我是杰西·利弗莫尔。市场永远不会错，只有意见会错。请问有什么可以帮你？",
+                "content": "Hello, I’m Jesse Livermore. The market is never wrong, only opinions are. How can I help you today?",
             }
         ],
     )
@@ -77,6 +77,57 @@ def get_stock_data(ticker: str, start, end):
         return pd.DataFrame()
 
 
+def run_livermore_strategy(
+    df: pd.DataFrame, fast_ma: int = 50, slow_ma: int = 200, breakout_window: int = 20
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Compute Livermore-inspired signals, returns, and trade log."""
+    if df.empty or "Close" not in df.columns:
+        return pd.DataFrame(), pd.DataFrame()
+
+    data = df.copy().sort_index()
+
+    data[f"{fast_ma}MA"] = data["Close"].rolling(window=fast_ma).mean()
+    data[f"{slow_ma}MA"] = data["Close"].rolling(window=slow_ma).mean()
+    data[f"{breakout_window}High"] = data["Close"].rolling(window=breakout_window).max()
+    data[f"{breakout_window}Low"] = data["Close"].rolling(window=breakout_window).min()
+
+    positions: List[int] = []
+    current_pos = 0
+
+    for i in range(len(data)):
+        price = data["Close"].iloc[i]
+        breakout_high = data[f"{breakout_window}High"].shift(1).iloc[i]
+        breakout_low = data[f"{breakout_window}Low"].shift(1).iloc[i]
+        above_fast = price > data[f"{fast_ma}MA"].iloc[i]
+        above_slow = price > data[f"{slow_ma}MA"].iloc[i]
+
+        buy = price > breakout_high and above_fast and above_slow
+        sell = price < breakout_low
+
+        if buy:
+            current_pos = 1
+        elif sell:
+            current_pos = -1
+
+        positions.append(current_pos)
+
+    data["Position"] = positions
+    data["Buy-and-Hold Return"] = data["Close"].pct_change().fillna(0)
+    data["Strategy Return"] = data["Buy-and-Hold Return"] * data["Position"]
+    data["Cum_BnH"] = (1 + data["Buy-and-Hold Return"]).cumprod()
+    data["Cum_Strat"] = (1 + data["Strategy Return"]).cumprod()
+
+    data["Position_Change"] = data["Position"].diff().fillna(data["Position"])
+    trade_log = data[data["Position_Change"] != 0][["Position", "Close"]].copy()
+    trade_log["Action"] = trade_log["Position"].apply(
+        lambda p: "Buy breakout" if p == 1 else "Exit / Short"
+    )
+    trade_log.reset_index(inplace=True)
+    trade_log.rename(columns={"index": "Date", "Close": "Price"}, inplace=True)
+
+    return data, trade_log
+
+
 def format_sources(sources: List[Dict]) -> str:
     """Render a markdown-friendly sources block."""
     if not sources:
@@ -96,7 +147,7 @@ def reset_chat():
     st.session_state.messages = [
         {
             "role": "assistant",
-            "content": "你好，我是杰西·利弗莫尔。让我们重新开始讨论市场。",
+            "content": "Hello, I’m Jesse Livermore. Let’s restart our market conversation.",
         }
     ]
     st.session_state.chat_status = ""
@@ -154,6 +205,10 @@ def flatten_config_to_df(data: Dict) -> pd.DataFrame:
 service = load_service()
 ensure_state(service.current_llm_params())
 
+# Apply pending LLM param refresh before widgets render to avoid widget-state conflicts
+if st.session_state.get("_refresh_llm_params"):
+    refresh_llm_params()
+    st.session_state.pop("_refresh_llm_params", None)
 
 # ==========================================
 # 4. Deep CSS customization (core UI logic)
@@ -175,6 +230,10 @@ st.markdown(
         .stApp {
             background-color: var(--bg-dark);
             color: var(--text-primary);
+        }
+        /* Force typography to stay bright on dark background */
+        body, .stApp, .stApp p, .stApp span, .stApp label, .stMarkdown {
+            color: var(--text-primary) !important;
         }
 
         /* Hide Streamlit default header/menu */
@@ -393,63 +452,135 @@ with tab2:
         c4.write("")
         run_btn = c4.button("Run Simulation", type="primary", use_container_width=True)
 
+    with st.container():
+        p1, p2, p3 = st.columns(3)
+        fast_ma = p1.number_input("Fast MA (trend filter)", min_value=5, max_value=150, value=50, step=5)
+        slow_ma = p2.number_input("Slow MA (long trend)", min_value=50, max_value=400, value=200, step=10)
+        breakout_window = p3.number_input("Breakout window (days)", min_value=5, max_value=120, value=20, step=5)
+
     if run_btn:
-        with st.spinner("Calculating Strategy..."):
-            df = get_stock_data(ticker, start_date, end_date)
-            if not df.empty:
-                df["50MA"] = df["Close"].rolling(50).mean()
-                df["20High"] = df["Close"].rolling(20).max()
-                buy_cond = (df["Close"] > df["20High"].shift(1)) & (df["Close"] > df["50MA"])
-
-                df["Position"] = np.where(buy_cond, 1, 0)
-                pos = 0
-                positions = []
-                for i in range(len(df)):
-                    if buy_cond.iloc[i]:
-                        pos = 1
-                    elif df["Close"].iloc[i] < df["Close"].rolling(20).mean().iloc[i]:
-                        pos = 0
-                    positions.append(pos)
-                df["Position"] = positions
-
-                df["Strat_Ret"] = (
-                    df["Close"].pct_change() * pd.Series(positions).shift(1).values
-                ).fillna(0)
-                df["Cum_Strat"] = (1 + df["Strat_Ret"]).cumprod()
-                df["Cum_BnH"] = (1 + df["Close"].pct_change()).cumprod()
-
-                fig = go.Figure()
-                fig.add_trace(
-                    go.Scatter(
-                        x=df.index, y=df["Cum_BnH"], name="Buy & Hold", line=dict(color="#64748b")
+        if start_date >= end_date:
+            st.error("Start date must be before end date.")
+        else:
+            with st.spinner("Calculating Strategy..."):
+                df = get_stock_data(ticker, start_date, end_date)
+                if df.empty:
+                    st.error("No data found for this ticker.")
+                else:
+                    results, trades = run_livermore_strategy(
+                        df, fast_ma=fast_ma, slow_ma=slow_ma, breakout_window=breakout_window
                     )
-                )
-                fig.add_trace(
-                    go.Scatter(
-                        x=df.index,
-                        y=df["Cum_Strat"],
-                        name="Livermore Strategy",
-                        line=dict(color="#3b82f6", width=2),
-                    )
-                )
-                fig.update_layout(
-                    template="plotly_dark",
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    plot_bgcolor="rgba(0,0,0,0)",
-                    height=450,
-                    title="Equity Curve",
-                )
-                st.plotly_chart(fig, use_container_width=True)
 
-                m1, m2 = st.columns(2)
-                m1.metric("Buy & Hold Return", f"{(df['Cum_BnH'].iloc[-1] - 1):.2%}")
-                m2.metric(
-                    "Strategy Return",
-                    f"{(df['Cum_Strat'].iloc[-1] - 1):.2%}",
-                    delta=f"{(df['Cum_Strat'].iloc[-1] - df['Cum_BnH'].iloc[-1]):.2%}",
-                )
-            else:
-                st.error("No data found for this ticker.")
+                    if results.empty:
+                        st.error("Unable to generate strategy output for this date range.")
+                    else:
+                        strat_ret = results["Cum_Strat"].iloc[-1] - 1
+                        bh_ret = results["Cum_BnH"].iloc[-1] - 1
+                        delta = strat_ret - bh_ret
+
+                        m1, m2, m3 = st.columns(3)
+                        m1.metric("Strategy Return", f"{strat_ret:.2%}")
+                        m2.metric("Buy & Hold Return", f"{bh_ret:.2%}")
+                        m3.metric("Outperformance", f"{delta:.2%}")
+
+                        price_fig = go.Figure()
+                        price_fig.add_trace(
+                            go.Scatter(
+                                x=results.index,
+                                y=results["Close"],
+                                name="Close",
+                                line=dict(color="#e2e8f0"),
+                            )
+                        )
+                        price_fig.add_trace(
+                            go.Scatter(
+                                x=results.index,
+                                y=results[f"{fast_ma}MA"],
+                                name=f"{fast_ma} MA",
+                                line=dict(color="#22c55e", width=1.5),
+                            )
+                        )
+                        price_fig.add_trace(
+                            go.Scatter(
+                                x=results.index,
+                                y=results[f"{slow_ma}MA"],
+                                name=f"{slow_ma} MA",
+                                line=dict(color="#a855f7", width=1.5),
+                            )
+                        )
+
+                        entries = results[results["Position_Change"] > 0]
+                        exits = results[results["Position_Change"] < 0]
+                        if not entries.empty:
+                            price_fig.add_trace(
+                                go.Scatter(
+                                    x=entries.index,
+                                    y=entries["Close"],
+                                    mode="markers",
+                                    marker=dict(color="#10b981", size=8, symbol="triangle-up"),
+                                    name="Breakout Buy",
+                                )
+                            )
+                        if not exits.empty:
+                            price_fig.add_trace(
+                                go.Scatter(
+                                    x=exits.index,
+                                    y=exits["Close"],
+                                    mode="markers",
+                                    marker=dict(color="#f87171", size=8, symbol="triangle-down"),
+                                    name="Exit / Short",
+                                )
+                            )
+
+                        price_fig.update_layout(
+                            template="plotly_dark",
+                            paper_bgcolor="rgba(0,0,0,0)",
+                            plot_bgcolor="rgba(0,0,0,0)",
+                            height=420,
+                            title="Price with MAs & Signals",
+                        )
+
+                        equity_fig = go.Figure()
+                        equity_fig.add_trace(
+                            go.Scatter(
+                                x=results.index,
+                                y=results["Cum_BnH"],
+                                name="Buy & Hold",
+                                line=dict(color="#64748b"),
+                            )
+                        )
+                        equity_fig.add_trace(
+                            go.Scatter(
+                                x=results.index,
+                                y=results["Cum_Strat"],
+                                name="Livermore Strategy",
+                                line=dict(color="#3b82f6", width=2),
+                            )
+                        )
+                        equity_fig.update_layout(
+                            template="plotly_dark",
+                            paper_bgcolor="rgba(0,0,0,0)",
+                            plot_bgcolor="rgba(0,0,0,0)",
+                            height=420,
+                            title="Equity Curve (Return Dynamics)",
+                        )
+
+                        st.plotly_chart(price_fig, use_container_width=True)
+                        st.plotly_chart(equity_fig, use_container_width=True)
+
+                        if not trades.empty:
+                            st.markdown("**Trade Log (signals & fills)**")
+                            st.dataframe(
+                                trades.tail(20),
+                                use_container_width=True,
+                                hide_index=True,
+                                column_config={
+                                    "Date": st.column_config.DatetimeColumn("Date", format="YYYY-MM-DD"),
+                                    "Price": st.column_config.NumberColumn("Price", format="%.2f"),
+                                    "Action": st.column_config.TextColumn("Action"),
+                                    "Position": st.column_config.NumberColumn("Position"),
+                                },
+                            )
 
 # --- TAB 3: System dashboard ---
 with tab3:
@@ -512,5 +643,6 @@ with tab4:
                 st.error(f"Failed to update settings: {exc}")
 
     with load_col:
-        if st.button("Reload from service"):
-            refresh_llm_params()
+        if st.button("Reload from service", type="primary"):
+            st.session_state["_refresh_llm_params"] = True
+            st.rerun()

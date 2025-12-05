@@ -1,24 +1,30 @@
 ============================================================
 RAG EVALUATION REPORT
 ============================================================
-Generated: 2025-12-02 20:55:38
+Generated: 2025-12-04 23:18:56
 
 OVERALL
 ----------------------------------------
-Total samples: 22
-Valid samples: 22
+Total samples: 10
+Valid samples: 10
 Error samples: 0
 Error rate: 0.0%
 
 METRICS
 ----------------------------------------
 Substring Match: 0.0%
-Keyword Coverage: 48.4%
-Semantic Similarity: 0.708
-Word Overlap: 0.225
-Avg Latency: 6.661s
-LLM Judge Score: 0.691
+Keyword Coverage: 32.3%
+Semantic Similarity: 0.715
+Word Overlap: 0.200
+Avg Latency: 24.808s
+LLM Judge Score: 0.855
 
 BY LABEL
 ----------------------------------------
-Timing: 22 samples, avg semantic: 0.708
+Strategy: 3 samples, avg semantic: 0.677
+Psychology: 2 samples, avg semantic: 0.609
+Trading Rule: 1 samples, avg semantic: 0.850
+Market History: 1 samples, avg semantic: 0.758
+Manipulation: 1 samples, avg semantic: 0.826
+Market Analysis: 1 samples, avg semantic: 0.773
+Market Psychology: 1 samples, avg semantic: 0.697

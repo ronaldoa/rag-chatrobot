@@ -1,174 +1,122 @@
 """Retriever implementation with reranking."""
 
-"""Retriever implementation with reranking (dense-only & hybrid sparse+dense)."""
-
-from typing import List, Sequence, Tuple
-
-from langchain.prompts import PromptTemplate
 from langchain.schema import BaseRetriever, Document
 from langchain.vectorstores import FAISS
 from langchain_community.retrievers import BM25Retriever
-from langchain.retrievers.multi_query import MultiQueryRetriever
 from sentence_transformers import CrossEncoder
-
-from .config import (
-    RERANKER_MODEL,
-    INITIAL_K,
-    FINAL_K,
-    RETRIEVER_MODE,
-    HYBRID_WEIGHTS,
-    MULTI_QUERY,
-    MULTI_QUERY_NUM,
-)
+from typing import List, Sequence, Tuple
+from .config import RERANKER_MODEL, INITIAL_K, FINAL_K, USE_HYBRID, HYBRID_WEIGHTS
 
 
 def _parse_weights(weights: str) -> Tuple[float, float]:
-    """Parse dense/sparse weights from env string like '0.6,0.4'."""
+    """Parse dense/sparse weights from env string like "0.6,0.4"."""
     try:
         dense_w, sparse_w = [float(x.strip()) for x in weights.split(",")[:2]]
         total = dense_w + sparse_w
-        if total == 0.0:
+        if total == 0:
             return 0.5, 0.5
         return dense_w / total, sparse_w / total
     except Exception:
-        # 默认 0.5 / 0.5
         return 0.5, 0.5
 
 
-def get_retriever(vectorstore: FAISS, llm=None) -> BaseRetriever:
+class RerankerRetriever(BaseRetriever):
     """
-    Build a retriever with CrossEncoder reranking.
+    Two-stage retriever with reranker.
 
-    - 默认使用 FAISS 的 dense 相似度检索 + CrossEncoder 重排。
-    - 如果 RETRIEVER_MODE=hybrid，则使用 HybridRerankerRetriever：
-      dense (FAISS) + sparse (BM25) 混合 + CrossEncoder 重排。
-    - 支持纯 dense 或纯 BM25 模式，均带 CrossEncoder 重排。
+    Stage 1: FAISS fast retrieval (coarse).
+    Stage 2: CrossEncoder reranking (fine).
     """
-    # 构建 CrossEncoder reranker
-    reranker = CrossEncoder(RERANKER_MODEL)
 
-    # dense retriever：从 FAISS 来
-    dense = vectorstore.as_retriever(
-        search_type="similarity", search_kwargs={"k": INITIAL_K}
-    )
-
-    mode = RETRIEVER_MODE if RETRIEVER_MODE in {"dense", "bm25", "hybrid"} else "hybrid"
-    sparse: BM25Retriever | None = None
-    if mode in {"bm25", "hybrid"}:
-        # 从 vectorstore 里取出 Document 列表，用于 BM25
-        # ⚠️ 注意：要保证构建 vectorstore 时是用的 chunk 后的 docs
-        docs: Sequence[Document] = list(vectorstore.docstore._dict.values())
-        sparse = BM25Retriever.from_documents(docs)
-        sparse.k = INITIAL_K
-
-    base_retriever: BaseRetriever
-    if mode == "dense":
-        # 只用 dense + reranker
-        base_retriever = SimpleRerankerRetriever(
-            base_retriever=dense,
-            reranker=reranker,
-            k=INITIAL_K,
-            final_k=FINAL_K,
-        )
-
-    elif mode == "bm25":
-        # 纯 BM25 + reranker
-        base_retriever = SimpleRerankerRetriever(
-            base_retriever=sparse,
-            reranker=reranker,
-            k=INITIAL_K,
-            final_k=FINAL_K,
-        )
-
-    else:
-        # Hybrid 模式：dense + sparse 混合
-        dense_w, sparse_w = _parse_weights(HYBRID_WEIGHTS)
-        init_k = INITIAL_K
-        fin_k = FINAL_K
-
-        base_retriever = HybridRerankerRetriever(
-            dense_retriever=dense,
-            sparse_retriever=sparse,
-            reranker=reranker,
-            initial_k=init_k,
-            final_k=fin_k,
-            dense_weight=dense_w,
-            sparse_weight=sparse_w,
-        )
-
-    if MULTI_QUERY:
-        # Use multi-query expansion to reduce single-query miss; each line = one rewritten query.
-        prompt = PromptTemplate(
-            input_variables=["question"],
-            template=(
-                "You are a query rewriting assistant for retrieval.\n"
-                f"Given a question, generate {MULTI_QUERY_NUM} alternative phrasings or keyword-focused variants "
-                "that could retrieve relevant documents.\n"
-                "Provide each rewritten query on a new line.\n\n"
-                "Question: {question}"
-            ),
-        )
-        if llm is None:
-            from .llm import get_llm  # Lazy import to avoid circular deps at module load
-
-            llm = get_llm()
-        return MultiQueryRetriever.from_llm(
-            retriever=base_retriever,
-            llm=llm,
-            prompt=prompt,
-        )
-
-    return base_retriever
-
-
-# ======================================================================
-# 1. SimpleRerankerRetriever：只用 dense 检索 + CrossEncoder 重排
-# ======================================================================
-
-
-class SimpleRerankerRetriever(BaseRetriever):
-    """Simple dense retriever + CrossEncoder reranker."""
-
-    base_retriever: BaseRetriever
+    vectorstore: FAISS
     reranker: CrossEncoder
-    k: int = INITIAL_K
+    initial_k: int = INITIAL_K
     final_k: int = FINAL_K
-    score_threshold: float = 0.0  # 可选：过滤过低分数
+    score_threshold: float = 0.0  # Optional score threshold
 
     class Config:
         arbitrary_types_allowed = True
 
     def _get_relevant_documents(self, query: str) -> List[Document]:
-        # Stage 1: dense 初筛
-        docs = self.base_retriever.get_relevant_documents(query) or []
-        if not docs:
+        """
+        Retrieve relevant documents.
+
+        Args:
+            query: Search query
+
+        Returns:
+            List of relevant documents
+        """
+        # Stage 1: FAISS coarse retrieval
+        initial_docs = self.vectorstore.similarity_search(query, k=self.initial_k)
+
+        if not initial_docs:
             return []
 
-        # Stage 2: CrossEncoder 重排
-        pairs = [[query, doc.page_content] for doc in docs]
+        # Stage 2: Reranker fine scoring
+        # Build pairs: [(query, doc1), (query, doc2), ...]
+        pairs = [[query, doc.page_content] for doc in initial_docs]
+
+        # Compute scores
         scores = self.reranker.predict(pairs)
 
-        doc_score_pairs = list(zip(docs, scores))
+        # Pair docs with scores
+        doc_score_pairs = list(zip(initial_docs, scores))
 
-        # 可选阈值过滤
-        if self.score_threshold > 0.0:
+        # Optional: filter low scores
+        if self.score_threshold > 0:
             doc_score_pairs = [
-                (d, s) for d, s in doc_score_pairs if s >= self.score_threshold
+                (doc, score)
+                for doc, score in doc_score_pairs
+                if score >= self.score_threshold
             ]
 
-        # 按 score 降序
+        # Sort by score descending
         doc_score_pairs.sort(key=lambda x: x[1], reverse=True)
 
-        return [doc for doc, _ in doc_score_pairs[: self.final_k]]
+        # Return top-K
+        reranked_docs = [doc for doc, score in doc_score_pairs[: self.final_k]]
+
+        return reranked_docs
 
     async def _aget_relevant_documents(self, query: str) -> List[Document]:
-        # 简单地调用同步版本
+        """Async version (delegates to sync)."""
         return self._get_relevant_documents(query)
 
 
-# ======================================================================
-# 2. HybridRerankerRetriever：dense + BM25 混合 + CrossEncoder 重排
-# ======================================================================
+def get_retriever(
+    vectorstore: FAISS, initial_k: int = None, final_k: int = None
+) -> RerankerRetriever:
+    """Create a retriever instance (hybrid if enabled)."""
+    print(f"  • Reranker model: {RERANKER_MODEL}")
+    reranker = CrossEncoder(RERANKER_MODEL, max_length=512)
+
+    init_k = initial_k or INITIAL_K
+    fin_k = final_k or FINAL_K
+
+    if not USE_HYBRID:
+        return RerankerRetriever(
+            vectorstore=vectorstore, reranker=reranker, initial_k=init_k, final_k=fin_k
+        )
+
+    dense = vectorstore.as_retriever(search_kwargs={"k": init_k})
+    # Build BM25 from existing documents in vectorstore
+    docs: Sequence[Document] = list(vectorstore.docstore._dict.values())
+    sparse = BM25Retriever.from_documents(docs)
+    sparse.k = init_k
+
+    dense_w, sparse_w = _parse_weights(HYBRID_WEIGHTS)
+    print(f"  • Hybrid mode enabled (dense={dense_w:.2f}, sparse={sparse_w:.2f})")
+
+    return HybridRerankerRetriever(
+        dense_retriever=dense,
+        sparse_retriever=sparse,
+        reranker=reranker,
+        initial_k=init_k,
+        final_k=fin_k,
+        dense_weight=dense_w,
+        sparse_weight=sparse_w,
+    )
 
 
 class HybridRerankerRetriever(BaseRetriever):
@@ -185,7 +133,7 @@ class HybridRerankerRetriever(BaseRetriever):
     class Config:
         arbitrary_types_allowed = True
 
-    # ---------- 辅助：简单 tokenizer，用于 keyword/entity bonus ----------
+    # ---------- 辅助：简单 tokenizer，用于 entity / keyword bonus ----------
 
     @staticmethod
     def _simple_tokenize(text: str) -> list[str]:
@@ -197,9 +145,9 @@ class HybridRerankerRetriever(BaseRetriever):
 
     def _entity_bonus(self, query: str, doc_text: str) -> float:
         """
-        对问句里的“重要 token”做加权，返回 0.0 ~ 1.0 的 bonus。
+        对问句里的"重要 token"做加权，返回 0.0 ~ 1.0 的 bonus。
         """
-        # 偏大的停用词列表，过滤掉功能词
+        # 扩展的停用词列表
         stopwords = {
             # Articles
             "the",
@@ -277,7 +225,7 @@ class HybridRerankerRetriever(BaseRetriever):
         # 交集占比，最多 1.0
         return min(1.0, len(inter) / len(q_set))
 
-    # ---------- 核心：同步检索接口（给 LangChain 用） ----------
+    # ---------- 核心：同步检索接口（给 langchain 用） ----------
 
     def _get_relevant_documents(self, query: str) -> List[Document]:
         def _retrieve(r: BaseRetriever) -> List[Document]:
@@ -296,13 +244,9 @@ class HybridRerankerRetriever(BaseRetriever):
 
         # ---- Dense 部分：用排名衰减近似相似度 ----
         for rank, doc in enumerate(dense_docs):
-            # 尽量用 chunk_id / id，如果没有就退回到 Python 对象 id
+            # 尽量用 chunk_id / id，如果没有就退回 source+page
             chunk_id = doc.metadata.get("chunk_id") or doc.metadata.get("id") or id(doc)
-            key = (
-                f"{doc.metadata.get('source', '')}-"
-                f"{doc.metadata.get('page', '')}-"
-                f"{chunk_id}"
-            )
+            key = f"{doc.metadata.get('source', '')}-{doc.metadata.get('page', '')}-{chunk_id}"
 
             if key not in scored_map:
                 scored_map[key] = {
@@ -321,11 +265,7 @@ class HybridRerankerRetriever(BaseRetriever):
         # ---- Sparse 部分：BM25 分数（存在 metadata["score"] 里） ----
         for doc in sparse_docs:
             chunk_id = doc.metadata.get("chunk_id") or doc.metadata.get("id") or id(doc)
-            key = (
-                f"{doc.metadata.get('source', '')}-"
-                f"{doc.metadata.get('page', '')}-"
-                f"{chunk_id}"
-            )
+            key = f"{doc.metadata.get('source', '')}-{doc.metadata.get('page', '')}-{chunk_id}"
 
             if key not in scored_map:
                 scored_map[key] = {
@@ -394,4 +334,67 @@ class HybridRerankerRetriever(BaseRetriever):
 
     async def _aget_relevant_documents(self, query: str) -> List[Document]:
         # 简单地调用同步版本（如果以后需要，可以改成真正异步的）
+        return self._get_relevant_documents(query)
+
+
+class HybridRerankerRetriever_1(BaseRetriever):
+    """Hybrid sparse+dense retriever with CrossEncoder reranking."""
+
+    dense_retriever: BaseRetriever
+    sparse_retriever: BM25Retriever
+    reranker: CrossEncoder
+    initial_k: int = INITIAL_K
+    final_k: int = FINAL_K
+    dense_weight: float = 0.5
+    sparse_weight: float = 0.5
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    def _get_relevant_documents(self, query: str) -> List[Document]:
+        def _retrieve(r):
+            """Call retriever using invoke when available to avoid deprecation warnings."""
+            invoke_fn = getattr(r, "invoke", None)
+            if callable(invoke_fn):
+                return invoke_fn(query)
+            return r.get_relevant_documents(query)
+
+        # Stage 1: get candidates from both retrievers
+        dense_docs = _retrieve(self.dense_retriever) or []
+        sparse_docs = _retrieve(self.sparse_retriever) or []
+
+        # Weighted scores: BM25 retriever returns scores in metadata
+        scored = []
+        for doc in dense_docs:
+            scored.append((doc, self.dense_weight))
+        for doc in sparse_docs:
+            bm_score = doc.metadata.get("score", 1.0)
+            scored.append((doc, bm_score * self.sparse_weight))
+
+        # Deduplicate by source+page
+        seen = set()
+        merged = []
+        for doc, sc in scored:
+            key = f"{doc.metadata.get('source', '')}-{doc.metadata.get('page', '')}"
+            if key in seen:
+                continue
+            seen.add(key)
+            doc.metadata["_pre_score"] = sc
+            merged.append(doc)
+
+        # Keep up to initial_k before reranking
+        merged = merged[: self.initial_k]
+        if not merged:
+            return []
+
+        # Stage 2: CrossEncoder reranking
+        pairs = [[query, doc.page_content] for doc in merged]
+        scores = self.reranker.predict(pairs)
+
+        doc_score_pairs = list(zip(merged, scores))
+        doc_score_pairs.sort(key=lambda x: x[1], reverse=True)
+
+        return [doc for doc, _ in doc_score_pairs[: self.final_k]]
+
+    async def _aget_relevant_documents(self, query: str) -> List[Document]:
         return self._get_relevant_documents(query)

@@ -1,0 +1,163 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
+  <diagram name="RAG Full Pipeline" id="u9bwTizaKIcOCafnVUdI">
+    <mxGraphModel dx="1434" dy="907" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-94" value="Full Q&amp;A Pipeline — From Question to Final Answer" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="760" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-95" value="User Input:&#xa;&quot;How does Llama 3 perform on code generation tasks?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="300" y="140" width="560" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-96" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-95" target="Gw3QcDQ-U_VshOb2RXXV-97">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-97" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="560" y="240" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-98" value="Gradio UI&#xa;ui/gradio_chat&#xa;chat_function()" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="320" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-99" value="API Request&#xa;api/chat.py&#xa;POST /api/chat" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="660" y="320" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-100" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-97" target="Gw3QcDQ-U_VshOb2RXXV-98">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-101" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-97" target="Gw3QcDQ-U_VshOb2RXXV-99">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-102" value="QA Service&#xa;qa_service.ask(question)&#xa;&#xa;Core Orchestration Logic" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="380" y="460" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-103" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-98" target="Gw3QcDQ-U_VshOb2RXXV-102">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-104" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-99" target="Gw3QcDQ-U_VshOb2RXXV-102">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-105" value="Phase 1: Retrieve Relevant Documents" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="200" y="600" width="760" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-106" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-102" target="Gw3QcDQ-U_VshOb2RXXV-105">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-107" value="Step 1: Query Embedding&#xa;embeddings.embed_query()&#xa;&#xa;Input: &quot;Llama 3 in code generation&quot;&#xa;Output: query_vector&#xa;[0.12, -0.34, 0.56, ...]&#xa;(384-dim vector)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#cce5ff;strokeColor=#36393d;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="700" width="560" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-108" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-105" target="Gw3QcDQ-U_VshOb2RXXV-107">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-109" value="Step 2: FAISS Retrieval (Coarse)&#xa;vectorstore.similarity_search()&#xa;&#xa;Algorithm: Cosine similarity&#xa;similarity = cosine(query, docs)&#xa;&#xa;Returns: top-20 candidate docs" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#cce5ff;strokeColor=#36393d;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="870" width="560" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-110" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-107" target="Gw3QcDQ-U_VshOb2RXXV-109">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-111" value="Document 5&#xa;Score: 0.78&#xa;Rank: 5" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1040" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-112" value="Document 12&#xa;Score: 0.92&#xa;Rank: 1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="660" y="1040" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-113" value="..." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="1060" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-114" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-109" target="Gw3QcDQ-U_VshOb2RXXV-111">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-115" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-109" target="Gw3QcDQ-U_VshOb2RXXV-112">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-116" value="Step 3: Reranker (Fine Ranking)&#xa;reranker.predict(pairs)&#xa;&#xa;Input:&#xa;  [(question, doc5 text),&#xa;   (question, doc12 text), ...]&#xa;&#xa;CrossEncoder Deep Understanding:&#xa;• Analyze semantic relation&#xa;• Not only similarity, but relevance&#xa;• Re-score all pairs" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#cce5ff;strokeColor=#36393d;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1170" width="560" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-117" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-111" target="Gw3QcDQ-U_VshOb2RXXV-116">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-118" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-112" target="Gw3QcDQ-U_VshOb2RXXV-116">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-119" value="Reranking Results:&#xa;&#xa;1. Document 12  Score: 0.94 ⭐⭐⭐&#xa;   &quot;On HumanEval benchmark...&quot;&#xa;&#xa;2. Document 5   Score: 0.87 ⭐⭐&#xa;   &quot;Code generation with Llama 3...&quot;&#xa;&#xa;3. Document 3   Score: 0.81 ⭐&#xa;   &quot;Llama 3.1 supports...&quot;&#xa;&#xa;Keep top-3" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1400" width="560" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-120" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-116" target="Gw3QcDQ-U_VshOb2RXXV-119">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-121" value="Phase 2: Generate Final Answer" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1660" width="760" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-122" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-119" target="Gw3QcDQ-U_VshOb2RXXV-121">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-123" value="Step 4: Construct Prompt&#xa;PromptTemplate.format()&#xa;&#xa;Constructed Prompt:&#xa;&quot;&quot;&quot;&#xa;&lt;|begin_of_text|&gt;&#xa;&lt;|start_header_id|&gt;system...&#xa;&#xa;You are an AI assistant. Use the&#xa;following context to answer:&#xa;&#xa;Context:&#xa;[Document 12 text]&#xa;[Document 5 text]&#xa;[Document 3 text]&#xa;&#xa;&lt;|start_header_id|&gt;user...&#xa;How does Llama 3 perform on&#xa;code generation tasks?&#xa;&#xa;&lt;|start_header_id|&gt;assistant...&#xa;&quot;&quot;&quot;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1760" width="560" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-124" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-121" target="Gw3QcDQ-U_VshOb2RXXV-123">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-125" value="Step 5: LlamaCpp Tokenization&#xa;(Built into GGUF model)&#xa;&#xa;Text → Token IDs&#xa;&quot;Llama 3...&quot; → [123, 456, ...]" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="2130" width="560" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-126" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-123" target="Gw3QcDQ-U_VshOb2RXXV-125">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-127" value="Step 6: LlamaCpp Inference Engine&#xa;llm(prompt)&#xa;&#xa;C++ Inference Loop:&#xa;┌────────────────────────┐&#xa;│ while not end_token:   │&#xa;│   1. Forward pass      │&#xa;│      • Matrix mult     │&#xa;│      • Attention       │&#xa;│      • LayerNorm       │&#xa;│   2. Sample next token │&#xa;│      • temperature=0.7 │&#xa;│      • top_p=0.95      │&#xa;│   3. Append to output  │&#xa;│   4. Update KV cache   │&#xa;└────────────────────────┘&#xa;&#xa;Generation Speed: ~10 tokens/sec&#xa;(CPU mode)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="300" y="2280" width="560" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-128" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-125" target="Gw3QcDQ-U_VshOb2RXXV-127">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-129" value="Generated Token Sequence:&#xa;[234, 567, 890, 123, 456, ...]&#xa;&#xa;Token-by-token streaming" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffe6cc;strokeColor=#d79b00;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="2610" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-130" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-127" target="Gw3QcDQ-U_VshOb2RXXV-129">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-131" value="Step 7: Detokenization&#xa;(Token IDs → Text)&#xa;&#xa;[234, 567, ...] → &quot;Based on the...&quot;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="2740" width="560" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-132" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-129" target="Gw3QcDQ-U_VshOb2RXXV-131">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-133" value="Step 8: Post-processing&#xa;LangChain Post-Processing&#xa;&#xa;• Remove special tokens&#xa;  (&lt;|eot_id|&gt;, &lt;|begin_of_text|&gt;)&#xa;• Clean extra spaces&#xa;• Extract source references" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="2880" width="560" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-134" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-131" target="Gw3QcDQ-U_VshOb2RXXV-133">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-135" value="Final Output" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="200" y="3050" width="760" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-136" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-133" target="Gw3QcDQ-U_VshOb2RXXV-135">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-137" value="Final Answer:&#xa;&#xa;&quot;Based on the provided context,&#xa;Llama 3.1 performs strongly on&#xa;code generation tasks. On the&#xa;HumanEval benchmark, the 8B model&#xa;achieves a pass@1 score of 68.4%,&#xa;outperforming most open-source&#xa;models of similar size. It shows&#xa;strong accuracy in generating&#xa;Python and JavaScript code with&#xa;improved quality and correctness.&quot;&#xa;&#xa;Sources:&#xa;• llama3_benchmark.pdf (page 15)&#xa;• technical_report.txt" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="3150" width="560" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-138" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-135" target="Gw3QcDQ-U_VshOb2RXXV-137">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-139" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="560" y="3440" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-140" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-137" target="Gw3QcDQ-U_VshOb2RXXV-139">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-141" value="Streamlit Display&#xa;&#xa;UI shows:&#xa;• Answer&#xa;• Source links&#xa;• Feedback buttons" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="250" y="3530" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-142" value="API JSON Output&#xa;&#xa;{&#xa;  &quot;answer&quot;: &quot;...&quot;,&#xa;  &quot;sources&quot;: [],&#xa;  &quot;metadata&quot;: {}&#xa;}" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="690" y="3530" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-143" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-139" target="Gw3QcDQ-U_VshOb2RXXV-141">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gw3QcDQ-U_VshOb2RXXV-144" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Gw3QcDQ-U_VshOb2RXXV-139" target="Gw3QcDQ-U_VshOb2RXXV-142">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

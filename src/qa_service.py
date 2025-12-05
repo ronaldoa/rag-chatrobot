@@ -18,7 +18,6 @@ from .config import (
     MAX_TOKENS,
     TOP_P,
     REPEAT_PENALTY,
-    USE_HYBRID,
 )  # Shared configuration helper
 from .embeddings import get_embeddings
 from .llm import get_llm
@@ -106,7 +105,7 @@ class QAService:
         self._load_llm()
 
         print("  ├─ Building retriever (with reranker)...")
-        self._retriever = get_retriever(self._vectorstore)
+        self._retriever = get_retriever(self._vectorstore, llm=self._llm)
 
         # Build QA chain
         self._build_chain()

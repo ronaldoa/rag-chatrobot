@@ -1,37 +1,49 @@
-"""Embedding model helpers."""
-from langchain.embeddings import HuggingFaceEmbeddings
-from .config import EMBEDDING_MODEL
+"""
+Embedding model helpers — BGE optimized version
+"""
+
+"""
+Embedding model helpers — BGE optimized version
+"""
+
 import torch
+from langchain_community.embeddings import HuggingFaceBgeEmbeddings
+from .config import EMBEDDING_MODEL
+
 
 def get_embeddings(device: str = None):
     """
-    Load the embedding model.
-
-    Args:
-        device: Target device ('cpu', 'cuda', 'mps', or None for auto-detect)
-
-    Returns:
-        HuggingFaceEmbeddings instance
+    Load a BGE embedding model with correct query instruction.
     """
+
+    # Auto-detect device
     if device is None:
-        # Auto-detect device
         if torch.cuda.is_available():
-            device = 'cuda'
-        elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-            device = 'mps'  # Apple Silicon
+            device = "cuda"
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            device = "mps"  # Apple Silicon
         else:
-            device = 'cpu'
+            device = "cpu"
 
     print(f"  • Embedding device: {device}")
+    print(f"  • Embedding model: {EMBEDDING_MODEL}")
 
-    return HuggingFaceEmbeddings(
+    # BGE 官方推荐的 query 指令
+    QUERY_INSTRUCTION = "Represent this query for retrieving relevant documents:"
+
+    model_kwargs = {
+        "device": device,
+        "trust_remote_code": True,
+    }
+
+    encode_kwargs = {
+        "normalize_embeddings": True,
+    }
+
+    return HuggingFaceBgeEmbeddings(
         model_name=EMBEDDING_MODEL,
-        model_kwargs={
-            'device': device,
-            'trust_remote_code': True
-        },
-        encode_kwargs={
-            'normalize_embeddings': True,  # Normalize vectors
-            'batch_size': 32  # Batch size
-        }
+        model_kwargs=model_kwargs,
+        encode_kwargs=encode_kwargs,
+        query_instruction=QUERY_INSTRUCTION,
+        # ⚠️ 这一版的 LangChain 不支持 text_instruction，所以不要传
     )

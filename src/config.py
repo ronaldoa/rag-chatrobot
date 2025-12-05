@@ -27,9 +27,22 @@ EMBEDDING_MODEL = os.getenv(
 RERANKER_MODEL = os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-base")
 
 # ============ Retrieval mode ============
-USE_HYBRID = os.getenv("USE_HYBRID", "True").lower() == "true"
+_legacy_use_hybrid = os.getenv("USE_HYBRID", "True").lower() == "true"
+RETRIEVER_MODE = os.getenv("RETRIEVER_MODE", None)
+if RETRIEVER_MODE:
+    RETRIEVER_MODE = RETRIEVER_MODE.lower()
+else:
+    # Fallback to previous USE_HYBRID flag
+    RETRIEVER_MODE = "hybrid" if _legacy_use_hybrid else "dense"
+if RETRIEVER_MODE not in {"dense", "bm25", "hybrid"}:
+    RETRIEVER_MODE = "hybrid"
+USE_HYBRID = RETRIEVER_MODE == "hybrid"
+
 # Optional weight for dense vs sparse when combining (dense_weight, sparse_weight)
 HYBRID_WEIGHTS = os.getenv("HYBRID_WEIGHTS", "0.5,0.5")
+# Multi-query expansion (paraphrase multiple queries then merge results)
+MULTI_QUERY = os.getenv("MULTI_QUERY", "False").lower() == "true"
+MULTI_QUERY_NUM = int(os.getenv("MULTI_QUERY_NUM", "3"))
 
 # ============ LLM parameters ============
 N_CTX = int(os.getenv("N_CTX", "4096"))
@@ -46,6 +59,11 @@ INITIAL_K = int(os.getenv("INITIAL_K", "20"))
 FINAL_K = int(os.getenv("FINAL_K", "3"))
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "1000"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "200"))
+SEMANTIC_CHUNKING = os.getenv("SEMANTIC_CHUNKING", "False").lower() == "true"
+SEMANTIC_BREAKPOINT_PERCENTILE = int(
+    os.getenv("SEMANTIC_BREAKPOINT_PERCENTILE", "95")
+)
+SEMANTIC_MIN_CHUNK_SIZE = int(os.getenv("SEMANTIC_MIN_CHUNK_SIZE", "200"))
 
 # ============ Server configuration ============
 SERVER_HOST = os.getenv("SERVER_HOST", "0.0.0.0")
@@ -174,10 +192,17 @@ class Settings:
             "top_p": TOP_P,
             "repeat_penalty": REPEAT_PENALTY,
             # Retrieval
+            "retriever_mode": RETRIEVER_MODE,
+            "hybrid_weights": HYBRID_WEIGHTS,
+            "multi_query": MULTI_QUERY,
+            "multi_query_num": MULTI_QUERY_NUM,
             "initial_k": INITIAL_K,
             "final_k": FINAL_K,
             "chunk_size": CHUNK_SIZE,
             "chunk_overlap": CHUNK_OVERLAP,
+            "semantic_chunking": SEMANTIC_CHUNKING,
+            "semantic_breakpoint_percentile": SEMANTIC_BREAKPOINT_PERCENTILE,
+            "semantic_min_chunk_size": SEMANTIC_MIN_CHUNK_SIZE,
             # Server
             "server_host": SERVER_HOST,
             "server_port": SERVER_PORT,
@@ -249,9 +274,28 @@ def print_config():
     print(f"GPU layers:      {N_GPU_LAYERS}")
     print(f"Chunk size:      {CHUNK_SIZE}")
     print(f"Chunk Oversize:  {CHUNK_OVERLAP}")
-    retrieval_mode = (
-        "Hybrid (BM25 + FAISS + Reranker)" if USE_HYBRID else "FAISS + Reranker"
-    )
-    print(f"Retrieval:       {retrieval_mode} (top-{INITIAL_K} → rerank top-{FINAL_K})")
+    if RETRIEVER_MODE == "dense":
+        retrieval_mode = "Dense (FAISS + Reranker)"
+    elif RETRIEVER_MODE == "bm25":
+        retrieval_mode = "BM25 + Reranker"
+    else:
+        retrieval_mode = "Hybrid (BM25 + FAISS + Reranker)"
+    weight_info = f" | weights (dense,bm25)={HYBRID_WEIGHTS}" if RETRIEVER_MODE == "hybrid" else ""
+    print(f"Retrieval:       {retrieval_mode} (top-{INITIAL_K} → rerank top-{FINAL_K}){weight_info}")
+    mq_status = f"On (x{MULTI_QUERY_NUM})" if MULTI_QUERY else "Off"
+    print(f"Multi-query:     {mq_status}")
+    if SEMANTIC_CHUNKING:
+        semantic_kwargs = {
+            "breakpoint_threshold_type": "percentile",
+            "breakpoint_threshold_amount": SEMANTIC_BREAKPOINT_PERCENTILE,
+        }
+        print(
+            "SemanticChunker: On "
+            f"(percentile={SEMANTIC_BREAKPOINT_PERCENTILE}, "
+            f"min_chunk_size={SEMANTIC_MIN_CHUNK_SIZE})"
+        )
+        print(f"  • init kwargs: {semantic_kwargs}")
+    else:
+        print("SemanticChunker: Off")
     print("=" * 60 + "\n")
     print("=" * 60 + "\n")

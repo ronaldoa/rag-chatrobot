@@ -1,0 +1,257 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="draw.io" version="22.0.0">
+  <diagram name="Document Ingestion Pipeline" id="ingest-pipeline">
+    <mxGraphModel dx="1434" dy="796" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="2500" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="title" value="Document Ingestion &amp; Vectorization Pipeline" style="rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontStyle=1;fillColor=#fa709a;strokeColor=#fee140;align=center;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="760" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- Start -->
+        <mxCell id="start" value="▶ Start: python ingest.py" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#fa709a;strokeColor=#fee140;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="350" y="140" width="460" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="start" target="step1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Step 1: Environment Check -->
+        <mxCell id="step1" value="Step 1: Environment Check 🔍&#xa;&#xa;validate_env()&#xa;&#xa;Verify required dependencies, API keys,&#xa;and system configuration" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="300" y="250" width="560" height="100" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="step1" target="step2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Step 2: Scan Directory -->
+        <mxCell id="step2" value="Step 2: Scan data/ Directory 📂&#xa;&#xa;scan_documents()&#xa;&#xa;Recursively find all supported document formats&#xa;(.txt, .pdf, .docx) in the data directory" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="300" y="400" width="560" height="110" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="step2" target="file-split">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- File Type Split Point -->
+        <mxCell id="file-split" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="560" y="560" width="40" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- .txt Files -->
+        <mxCell id="txt-file" value="📄 .txt Files&#xa;&#xa;TextLoader&#xa;&#xa;Plain text documents" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#a8edea;strokeColor=#00d2ff;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="650" width="200" height="110" as="geometry"/>
+        </mxCell>
+        
+        <!-- .pdf Files -->
+        <mxCell id="pdf-file" value="📕 .pdf Files&#xa;&#xa;PyPDFLoader&#xa;&#xa;PDF documents" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#a8edea;strokeColor=#00d2ff;align=center;" vertex="1" parent="1">
+          <mxGeometry x="480" y="650" width="200" height="110" as="geometry"/>
+        </mxCell>
+        
+        <!-- .docx Files -->
+        <mxCell id="docx-file" value="📘 .docx Files&#xa;&#xa;Docx2txtLoader&#xa;&#xa;Word documents" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#a8edea;strokeColor=#00d2ff;align=center;" vertex="1" parent="1">
+          <mxGeometry x="760" y="650" width="200" height="110" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow4a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;" edge="1" parent="1" source="file-split" target="txt-file">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow4b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;" edge="1" parent="1" source="file-split" target="pdf-file">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow4c" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;" edge="1" parent="1" source="file-split" target="docx-file">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Step 3: Merge Documents -->
+        <mxCell id="step3" value="Step 3: Merge All Loaded Documents 🔄&#xa;&#xa;documents = [doc1, doc2, doc3, ...]&#xa;&#xa;Consolidate all documents into a single collection" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#ffecd2;strokeColor=#fcb69f;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="810" width="560" height="100" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow5a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;" edge="1" parent="1" source="txt-file" target="step3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow5b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;" edge="1" parent="1" source="pdf-file" target="step3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow5c" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;" edge="1" parent="1" source="docx-file" target="step3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="step3" target="step4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Step 4: Document Chunking -->
+        <mxCell id="step4" value="Step 4: Document Chunking ✂️&#xa;&#xa;RecursiveCharacterTextSplitter" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="300" y="960" width="560" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- Chunking Parameters -->
+        <mxCell id="chunk-params" value="Chunking Parameters:&#xa;&#xa;• chunk_size = 1000&#xa;• chunk_overlap = 200&#xa;&#xa;Split documents into overlapping chunks&#xa;for better context preservation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#fff9e6;strokeColor=#f39c12;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="320" y="1070" width="520" height="120" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="step4" target="chunk-params">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="chunk-params" target="chunks-visual">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Chunks Visualization -->
+        <mxCell id="chunks-visual" value="📊 Generated Text Chunks (~1000 chunks)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#f8f9fa;strokeColor=#dee2e6;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1240" width="560" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- Chunk Examples Grid -->
+        <mxCell id="chunk1" value="📝 Chunk 1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffeaa7;strokeColor=#fdcb6e;" vertex="1" parent="1">
+          <mxGeometry x="320" y="1320" width="100" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="chunk2" value="📝 Chunk 2" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffeaa7;strokeColor=#fdcb6e;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1320" width="100" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="chunk3" value="📝 Chunk 3" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffeaa7;strokeColor=#fdcb6e;" vertex="1" parent="1">
+          <mxGeometry x="560" y="1320" width="100" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="chunk4" value="📝 Chunk 4" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffeaa7;strokeColor=#fdcb6e;" vertex="1" parent="1">
+          <mxGeometry x="680" y="1320" width="100" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="chunk-more" value="... and many more chunks" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#636e72;" vertex="1" parent="1">
+          <mxGeometry x="480" y="1380" width="200" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="chunks-visual" target="step5">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="1420"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Step 5: Load Embedding Model -->
+        <mxCell id="step5" value="Step 5: Load Embedding Model 🤖&#xa;&#xa;get_embeddings()" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#d4fc79;strokeColor=#96e6a1;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1450" width="560" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- Embedding Model Info -->
+        <mxCell id="model-info" value="🧠 Sentence Transformer Model&#xa;&#xa;paraphrase-MiniLM-L6-v2&#xa;&#xa;Converts text into 384-dimensional&#xa;semantic vectors" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#e8f8f5;strokeColor=#27ae60;align=center;" vertex="1" parent="1">
+          <mxGeometry x="350" y="1560" width="460" height="110" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="step5" target="model-info">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="model-info" target="step6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Step 6: Batch Embedding -->
+        <mxCell id="step6" value="Step 6: Batch Embedding Processing ⚡&#xa;&#xa;for batch in chunks(texts, batch_size=100):&#xa;    vectors = model.encode(batch)&#xa;    all_vectors.extend(vectors)&#xa;&#xa;Process 100 texts per batch for efficiency" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#89f7fe;strokeColor=#66a6ff;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1720" width="560" height="130" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="step6" target="vector-split">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Vector Examples Split -->
+        <mxCell id="vector-split" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="560" y="1900" width="40" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- Vector Example 1 -->
+        <mxCell id="vector1" value="📄 Text Chunk 1&#xa;&quot;Llama 3 is a state-of-the-art&#xa;language model...&quot;&#xa;↓&#xa;[0.23, -0.45, 0.67, 0.12, ...]&#xa;&#xa;384 dimensions" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#e0c3fc;strokeColor=#8ec5fc;align=center;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="250" y="1990" width="250" height="120" as="geometry"/>
+        </mxCell>
+        
+        <!-- Vector Example 2 -->
+        <mxCell id="vector2" value="📄 Text Chunk 2&#xa;&quot;Performance benchmarks show&#xa;significant improvements...&quot;&#xa;↓&#xa;[0.18, -0.52, 0.71, 0.09, ...]&#xa;&#xa;384 dimensions" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#e0c3fc;strokeColor=#8ec5fc;align=center;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="660" y="1990" width="250" height="120" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow13a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;" edge="1" parent="1" source="vector-split" target="vector1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow13b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;" edge="1" parent="1" source="vector-split" target="vector2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Step 7: Create FAISS Index -->
+        <mxCell id="step7" value="Step 7: Create FAISS Index 🗄️&#xa;&#xa;FAISS.from_documents()" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#fbc2eb;strokeColor=#a6c1ee;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="300" y="2160" width="560" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow14a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;" edge="1" parent="1" source="vector1" target="step7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow14b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;" edge="1" parent="1" source="vector2" target="step7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- FAISS Index Info -->
+        <mxCell id="faiss-info" value="🔢 Vector Index Construction&#xa;&#xa;IndexFlatIP&#xa;(Inner-Product Similarity)&#xa;&#xa;Build efficient similarity search structure&#xa;for fast retrieval" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#f5e6ff;strokeColor=#9b59b6;align=center;" vertex="1" parent="1">
+          <mxGeometry x="350" y="2270" width="460" height="120" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="step7" target="faiss-info">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#667eea;" edge="1" parent="1" source="faiss-info" target="step8">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Step 8: Save to Disk -->
+        <mxCell id="step8" value="Step 8: Save to Disk 💾&#xa;&#xa;vectorstore.save_local()" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fillColor=#ffecd2;strokeColor=#fcb69f;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="300" y="2440" width="560" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- Saved Files -->
+        <mxCell id="file1" value="📊 index.faiss&#xa;&#xa;FAISS vector index containing&#xa;all embeddings" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#fff5e6;strokeColor=#e67e22;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="320" y="2550" width="240" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="file2" value="📦 index.pkl&#xa;&#xa;Metadata and&#xa;document mappings" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#fff5e6;strokeColor=#e67e22;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="600" y="2550" width="240" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow17a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;" edge="1" parent="1" source="step8" target="file1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow17b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;dashed=1;" edge="1" parent="1" source="step8" target="file2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Done -->
+        <mxCell id="done" value="🎉 Done! Vector Store Successfully Built&#xa;&#xa;▶ Run: python app.py" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#84fab0;strokeColor=#8fd3f4;fontColor=#FFFFFF;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="2680" width="560" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow18a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;" edge="1" parent="1" source="file1" target="done">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="arrow18b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#667eea;" edge="1" parent="1" source="file2" target="done">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
