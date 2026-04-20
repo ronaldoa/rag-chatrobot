@@ -26,7 +26,7 @@ from src.config import Settings
 # 1. Base page configuration
 # ==========================================
 st.set_page_config(
-    page_title="aiaio - Jesse Livermore",
+    page_title="Jesse Livermore",
     page_icon="🎩",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -387,7 +387,7 @@ with st.sidebar:
         <div class="user-profile">
             <div style="display:flex; align-items:center; gap:10px;">
                 <div class="avatar-circle">JL</div>
-                <div style="font-size:14px; font-weight:600; color:#f1f5f9;">Trader Joe</div>
+                <div style="font-size:14px; font-weight:600; color:#f1f5f9;">Team Livermore</div>
             </div>
             <div style="cursor:pointer;">{icon_gear}</div>
         </div>

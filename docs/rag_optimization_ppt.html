@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAG检索优化系统汇报</title>
+    <title>RAG Optimization Presentation</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
         
         body {
-            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             overflow: hidden;
         }
@@ -238,127 +238,126 @@
 </head>
 <body>
     <div class="presentation">
-        <!-- Slide 1: 标题页 -->
+        <!-- Slide 1: Title -->
         <div class="slide active title-slide">
-            <h1>📚 RAG检索优化与系统改进</h1>
-            <div class="subtitle">从检索命中率到Prompt设计的完整优化流程</div>
-            <div class="book-info">基于《Reminiscences of a Stock Operator》的本地RAG系统</div>
+            <h1>📚 RAG Retrieval Optimization & System Enhancement</h1>
+            <div class="subtitle">Complete Optimization Process from Retrieval Hit Rate to Prompt Design</div>
+            <div class="book-info">Based on Local RAG System for "Reminiscences of a Stock Operator"</div>
         </div>
 
-        <!-- Slide 2: 核心问题 -->
+        <!-- Slide 2: Core Problems -->
         <div class="slide">
-            <h1>🎯 我们面临的核心问题</h1>
+            <h1>🎯 Core Problems We Faced</h1>
             
             <div class="problem-box">
-                <h3>❌ 问题1: 检索命中率极低</h3>
+                <h3>❌ Problem 1: Extremely Low Retrieval Hit Rate</h3>
                 <ul>
                     <li>FAISS dense-only: <span class="highlight">top-1 = 0</span></li>
-                    <li>BM25-only: top-1 接近 0</li>
-                    <li><strong>很多问题在top-5内找不到正确页码</strong></li>
+                    <li>BM25-only: top-1 approaches 0</li>
+                    <li><strong>Many questions cannot find correct pages within top-5</strong></li>
                 </ul>
             </div>
             
             <div class="problem-box">
-                <h3>❌ 问题2: LLM容易产生幻觉</h3>
+                <h3>❌ Problem 2: LLM Prone to Hallucination</h3>
                 <ul>
-                    <li>混入书外的"常识"和"推理"</li>
-                    <li>无法回答时硬编答案,不会说"不知道"</li>
+                    <li>Mixing in external "common sense" and "reasoning"</li>
+                    <li>Fabricates answers instead of saying "I don't know" when unable to answer</li>
                 </ul>
             </div>
             
             <div class="problem-box">
-                <h3>❌ 问题3: 评测指标不合理</h3>
+                <h3>❌ Problem 3: Unreasonable Evaluation Metrics</h3>
                 <ul>
-                    <li>对跨页的summary题目过于严格</li>
-                    <li>测试问题过于简单,难以暴露系统缺陷</li>
+                    <li>Too strict for cross-page summary questions</li>
+                    <li>Test questions too simple, failing to expose system defects</li>
                 </ul>
             </div>
             <div class="slide-number">2/9</div>
         </div>
 
-        <!-- Slide 3: 优化策略总览 -->
+        <!-- Slide 3: Four Optimization Strategies -->
         <div class="slide">
-            <h1>🔧 四大优化策略</h1>
+            <h1>🔧 Four Major Optimization Strategies</h1>
             
             <div class="two-column">
                 <div class="solution-box">
-                    <h3>📄 1. Chunk参数调优</h3>
+                    <h3>📄 1. Chunk Parameter Tuning</h3>
                     <div class="code-box">1500 → 800 tokens<br>overlap: 200</div>
-                    <p style="margin-top: 10px;">✓ 提高信息集中度<br>✓ 减少noise干扰</p>
+                    <p style="margin-top: 10px;">✓ Improve information concentration<br>✓ Reduce noise interference</p>
                 </div>
                 
                 <div class="solution-box">
-                    <h3>🔍 2. Hybrid检索器</h3>
+                    <h3>🔍 2. Hybrid Retriever</h3>
                     <div class="code-box">Dense(0.3) + BM25(0.7)</div>
-                    <p style="margin-top: 10px;">✓ 结合语义+关键词<br>✓ BM25对书本QA最稳定</p>
+                    <p style="margin-top: 10px;">✓ Combine semantics + keywords<br>✓ BM25 most stable for book QA</p>
                 </div>
                 
                 <div class="solution-box">
-                    <h3>🔄 3. Multi-Query扩展</h3>
-                    <div class="code-box">1个问题 → 4个改写查询</div>
-                    <p style="margin-top: 10px;">✓ 提升召回率20-40%<br>✓ 处理口语化问题</p>
+                    <h3>🔄 3. Multi-Query Expansion</h3>
+                    <div class="code-box">1 question → 4 rewritten queries</div>
+                    <p style="margin-top: 10px;">✓ Improve recall by 20-40%<br>✓ Handle colloquial questions</p>
                 </div>
                 
                 <div class="solution-box">
-                    <h3>💬 4. Prompt严格约束</h3>
-                    <div class="code-box">仅用Context回答<br>无信息→明确说明</div>
-                    <p style="margin-top: 10px;">✓ 抑制幻觉<br>✓ 统一fallback</p>
+                    <h3>💬 4. Strict Prompt Constraints</h3>
+                    <div class="code-box">Only use Context<br>No info → explicitly state</div>
+                    <p style="margin-top: 10px;">✓ Suppress hallucination<br>✓ Unified fallback</p>
                 </div>
             </div>
             <div class="slide-number">3/9</div>
         </div>
 
-        <!-- Slide 4: Chunk优化详解 -->
+        <!-- Slide 4: Chunk Optimization Details -->
         <div class="slide">
-            <h1>📄 Chunk参数优化</h1>
+            <h1>📄 Chunk Parameter Optimization</h1>
             
-            <h2>为什么要缩小Chunk?</h2>
+            <h2>Why Reduce Chunk Size?</h2>
             
             <div class="two-column">
                 <div>
-                    <h3 style="color: #e74c3c;">❌ 1500 tokens的问题</h3>
+                    <h3 style="color: #e74c3c;">❌ Problems with 1500 tokens</h3>
                     <ul>
-                        <li>混杂大量无关内容</li>
-                        <li>Dense embedding信号稀释</li>
-                        <li>BM25命中后噪声多</li>
-                        <li>不利于精准定位</li>
+                        <li>Mixed with irrelevant content</li>
+                        <li>Dense embedding signals diluted</li>
+                        <li>High noise after BM25 hits</li>
+                        <li>Not conducive to precise localization</li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h3 style="color: #4caf50;">✓ 800 tokens的优势</h3>
+                    <h3 style="color: #4caf50;">✓ Advantages of 800 tokens</h3>
                     <ul>
-                        <li>信息更集中</li>
-                        <li>直接对应原文段落</li>
-                        <li>200 overlap保证连续性</li>
-                        <li>适合定位型检索</li>
+                        <li>More concentrated information</li>
+                        <li>Directly corresponds to original paragraphs</li>
+                        <li>200 overlap ensures continuity</li>
+                        <li>Suitable for location-based retrieval</li>
                     </ul>
                 </div>
             </div>
             
             <div class="result-box" style="margin-top: 30px;">
-                <h3>💡 设计理念</h3>
+                <h3>💡 Design Philosophy</h3>
                 <p style="font-size: 20px; line-height: 1.8;">
-                    书本QA更像<strong>"定位型检索"</strong>: 希望检索结果能直接对应到<strong>一句或一小段原文</strong>,
-                    而不是一大片混杂的内容。
+                    Book QA is more like <strong>"location-based retrieval"</strong>: expecting retrieval results to directly correspond to <strong>one sentence or a small paragraph</strong> from the original text, rather than a large mixed chunk.
                 </p>
             </div>
             <div class="slide-number">4/9</div>
         </div>
 
-        <!-- Slide 5: Hybrid检索器 -->
+        <!-- Slide 5: Hybrid Retriever -->
         <div class="slide">
-            <h1>🔍 Hybrid检索器设计</h1>
+            <h1>🔍 Hybrid Retriever Design</h1>
             
-            <h2>三种模式对比实验</h2>
+            <h2>Comparison of Three Modes</h2>
             
             <table>
                 <thead>
                     <tr>
-                        <th>检索模式</th>
+                        <th>Retrieval Mode</th>
                         <th>hit@3</th>
                         <th>hit@5</th>
-                        <th>特点</th>
+                        <th>Characteristics</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -366,201 +365,201 @@
                         <td><strong>dense-only</strong></td>
                         <td>2/10</td>
                         <td>2/10</td>
-                        <td style="color: #e74c3c;">难以精准定位页码</td>
+                        <td style="color: #e74c3c;">Hard to pinpoint page numbers</td>
                     </tr>
                     <tr style="background: #e8f5e9;">
                         <td><strong>bm25-only</strong></td>
                         <td>3/10</td>
                         <td>4/10</td>
-                        <td style="color: #4caf50;"><strong>对书本QA最稳定 ✓</strong></td>
+                        <td style="color: #4caf50;"><strong>Most stable for book QA ✓</strong></td>
                     </tr>
                     <tr>
                         <td><strong>hybrid(0.5, 0.5)</strong></td>
                         <td>2/10</td>
                         <td>3/10</td>
-                        <td>稍优于dense-only</td>
+                        <td>Slightly better than dense-only</td>
                     </tr>
                     <tr style="background: #e3f2fd;">
                         <td><strong>hybrid(0.3, 0.7)</strong></td>
                         <td>4/10</td>
                         <td>4/10</td>
-                        <td style="color: #2196f3;"><strong>最佳Hybrid配置 ⭐</strong></td>
+                        <td style="color: #2196f3;"><strong>Best Hybrid configuration ⭐</strong></td>
                     </tr>
                     <tr>
                         <td><strong>hybrid(0.7, 0.3)</strong></td>
                         <td>2/10</td>
                         <td>3/10</td>
-                        <td style="color: #e74c3c;">dense权重过高反而变差</td>
+                        <td style="color: #e74c3c;">Too high dense weight degrades performance</td>
                     </tr>
                 </tbody>
             </table>
             
             <div class="result-box" style="margin-top: 20px;">
-                <h3>🎯 最终选择: Dense(0.3) + BM25(0.7)</h3>
-                <p style="font-size: 20px;">在单本书+英文原文场景下,<strong>BM25权重更高</strong>的配置表现最稳定</p>
+                <h3>🎯 Final Choice: Dense(0.3) + BM25(0.7)</h3>
+                <p style="font-size: 20px;">In single-book + English text scenarios, <strong>higher BM25 weight</strong> configuration performs most stably</p>
             </div>
             <div class="slide-number">5/9</div>
         </div>
 
         <!-- Slide 6: Multi-Query -->
         <div class="slide">
-            <h1>🔄 Multi-Query: 召回率的救星</h1>
+            <h1>🔄 Multi-Query: The Recall Booster</h1>
             
-            <h2>工作原理</h2>
+            <h2>Working Principle</h2>
             <div class="code-box" style="font-size: 18px;">
-<strong>原始问题:</strong> "Why did he need the tape to be absolutely current?"
+<strong>Original Question:</strong> "Why did he need the tape to be absolutely current?"
 
-<strong>LLM生成4个改写:</strong>
+<strong>LLM generates 4 rewrites:</strong>
 1. What was the importance of having real-time tape data?
 2. Why was timing critical for the tape reading method?
 3. How did tape delays affect trading decisions?
 4. What role did current prices play in the strategy?
 
-→ 分别检索 → 取并集
+→ Retrieve separately → Take union
             </div>
             
             <div class="two-column" style="margin-top: 30px;">
                 <div class="metric">
-                    <div class="metric-label">召回率提升</div>
+                    <div class="metric-label">Recall Improvement</div>
                     <div class="metric-value">20-40%</div>
                 </div>
                 
                 <div class="metric">
-                    <div class="metric-label">改写查询数</div>
+                    <div class="metric-label">Rewritten Queries</div>
                     <div class="metric-value">1→4</div>
                 </div>
             </div>
             
             <div class="result-box" style="margin-top: 20px;">
-                <h3>✨ 适用场景</h3>
+                <h3>✨ Applicable Scenarios</h3>
                 <ul>
-                    <li>问题中缺少关键词(人名/术语)</li>
-                    <li>用户提问很口语化</li>
-                    <li>复杂的组合型问题</li>
+                    <li>Questions lacking keywords (names/terminology)</li>
+                    <li>User questions are very colloquial</li>
+                    <li>Complex combinatorial questions</li>
                 </ul>
             </div>
             <div class="slide-number">6/9</div>
         </div>
 
-        <!-- Slide 7: Prompt设计 -->
+        <!-- Slide 7: Prompt Design -->
         <div class="slide">
-            <h1>💬 Prompt重写: 抑制幻觉</h1>
+            <h1>💬 Prompt Rewrite: Suppress Hallucination</h1>
             
-            <h2>核心设计原则</h2>
+            <h2>Core Design Principles</h2>
             
             <div class="solution-box">
-                <h3>✅ 严格的三条铁律</h3>
+                <h3>✅ Three Strict Rules</h3>
                 <ol style="font-size: 20px; line-height: 1.8; margin-left: 50px;">
-                    <li><strong>只能使用Context中的信息</strong> (禁用外部知识)</li>
-                    <li><strong>信息不足时必须明确说明</strong><br>
+                    <li><strong>Only use information from Context</strong> (prohibit external knowledge)</li>
+                    <li><strong>Must explicitly state when information is insufficient</strong><br>
                         <span class="highlight">"Based on the provided information, I cannot fully answer this question."</span>
                     </li>
-                    <li><strong>答案限制在1-3句话</strong> (避免过度总结)</li>
+                    <li><strong>Limit answer to 1-3 sentences</strong> (avoid excessive summarization)</li>
                 </ol>
             </div>
             
-            <h2 style="margin-top: 30px;">效果对比</h2>
+            <h2 style="margin-top: 30px;">Effect Comparison</h2>
             <div class="two-column">
                 <div class="problem-box">
-                    <h3>优化前 ❌</h3>
+                    <h3>Before Optimization ❌</h3>
                     <ul>
-                        <li>混入书外常识</li>
-                        <li>找不到答案时乱编</li>
-                        <li>过度总结成"短作文"</li>
+                        <li>Mixed with external knowledge</li>
+                        <li>Fabricates when can't find answer</li>
+                        <li>Over-summarizes into "short essays"</li>
                     </ul>
                 </div>
                 
                 <div class="solution-box">
-                    <h3>优化后 ✓</h3>
+                    <h3>After Optimization ✓</h3>
                     <ul>
-                        <li>严格引用原文</li>
-                        <li>无法回答时明确说明</li>
-                        <li>简洁精准的1-3句答案</li>
+                        <li>Strictly cites original text</li>
+                        <li>Explicitly states inability when can't answer</li>
+                        <li>Concise and precise 1-3 sentence answers</li>
                     </ul>
                 </div>
             </div>
             <div class="slide-number">7/9</div>
         </div>
 
-        <!-- Slide 8: 评测体系改进 -->
+        <!-- Slide 8: Evaluation System -->
         <div class="slide">
-            <h1>📊 评测体系改进</h1>
+            <h1>📊 Evaluation System Improvement</h1>
             
-            <h2>两类测试集设计</h2>
+            <h2>Two Types of Test Sets</h2>
             
             <div class="two-column">
                 <div class="result-box">
-                    <h3>📝 Verbatim题目</h3>
-                    <p style="font-size: 18px; margin: 15px 0;">答案是原文直接引用</p>
+                    <h3>📝 Verbatim Questions</h3>
+                    <p style="font-size: 18px; margin: 15px 0;">Answers are direct quotes from original text</p>
                     <div class="code-box" style="font-size: 16px;">
-例: "What is stabilising process?"
-→ 严格匹配标注页码
+Example: "What is stabilising process?"
+→ Strict page number matching
                     </div>
                 </div>
                 
                 <div class="result-box">
-                    <h3>📖 Summary题目</h3>
-                    <p style="font-size: 18px; margin: 15px 0;">需要概括多页内容</p>
+                    <h3>📖 Summary Questions</h3>
+                    <p style="font-size: 18px; margin: 15px 0;">Require summarizing multi-page content</p>
                     <div class="code-box" style="font-size: 16px;">
-例: "咖啡交易为何失败?"
-→ 页码±1窗口容忍
+Example: "Why did coffee trading fail?"
+→ Page number ±1 window tolerance
                     </div>
                 </div>
             </div>
             
-            <h2 style="margin-top: 30px;">页码窗口策略</h2>
+            <h2 style="margin-top: 30px;">Page Window Strategy</h2>
             <div class="solution-box">
                 <ul style="font-size: 20px;">
-                    <li><strong>Verbatim:</strong> 只接受严格的 page ∈ gold_pages</li>
-                    <li><strong>Summary:</strong> 接受 page ∈ [gold_page ± 1]</li>
-                    <li><strong>理由:</strong> Summary题信息分布在2-3页,不应因跨页被判miss</li>
+                    <li><strong>Verbatim:</strong> Only accept strict page ∈ gold_pages</li>
+                    <li><strong>Summary:</strong> Accept page ∈ [gold_page ± 1]</li>
+                    <li><strong>Rationale:</strong> Summary questions have information distributed across 2-3 pages, should not be marked as miss due to cross-page</li>
                 </ul>
             </div>
             
-            <h2 style="margin-top: 25px;">问题复杂度演化</h2>
+            <h2 style="margin-top: 25px;">Question Complexity Evolution</h2>
             <div class="code-box" style="font-size: 17px;">
-<strong>Level 1:</strong> 单一事实 → "When did he go to work?"
-<strong>Level 2:</strong> 单因果 → "Why did he say X?"
-<strong>Level 3:</strong> 组合型 → "解释ancient history+实时需求+延迟如何破坏时机"
+<strong>Level 1:</strong> Single fact → "When did he go to work?"
+<strong>Level 2:</strong> Single causation → "Why did he say X?"
+<strong>Level 3:</strong> Combinatorial → "Explain ancient history + real-time need + how delay breaks timing"
             </div>
             <div class="slide-number">8/9</div>
         </div>
 
-        <!-- Slide 9: 总结 -->
+        <!-- Slide 9: Summary -->
         <div class="slide">
-            <h1>🎉 优化成果总结</h1>
+            <h1>🎉 Optimization Results Summary</h1>
             
             <div class="two-column">
                 <div class="metric" style="background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);">
-                    <div class="metric-label">检索命中率</div>
+                    <div class="metric-label">Retrieval Hit Rate</div>
                     <div class="metric-value">+40%</div>
-                    <div class="metric-label">hit@3 显著提升</div>
+                    <div class="metric-label">Significant hit@3 improvement</div>
                 </div>
                 
                 <div class="metric" style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);">
-                    <div class="metric-label">幻觉率</div>
+                    <div class="metric-label">Hallucination Rate</div>
                     <div class="metric-value">-60%</div>
-                    <div class="metric-label">明显减少乱编</div>
+                    <div class="metric-label">Significant reduction in fabrication</div>
                 </div>
             </div>
             
-            <h2 style="margin-top: 30px;">🔑 五大核心优化成果</h2>
+            <h2 style="margin-top: 30px;">🔑 Five Core Optimization Achievements</h2>
             <div class="solution-box">
                 <ul style="font-size: 22px; line-height: 1.8;">
-                    <li><span class="emoji">🎯</span> <strong>检索更准:</strong> BM25 + Multi-Query → 页码命中率稳定</li>
-                    <li><span class="emoji">📚</span> <strong>检索更全:</strong> Chunk改造(800) + Multi-Query → 召回提升20-40%</li>
-                    <li><span class="emoji">🔒</span> <strong>回答更安全:</strong> 新Prompt杜绝幻觉,只用Context回答</li>
-                    <li><span class="emoji">📐</span> <strong>评测更合理:</strong> 页码窗口解决summary题误判</li>
-                    <li><span class="emoji">⚙️</span> <strong>系统更可控:</strong> 可解释、可复现、可调优</li>
+                    <li><span class="emoji">🎯</span> <strong>More Accurate Retrieval:</strong> BM25 + Multi-Query → stable page hit rate</li>
+                    <li><span class="emoji">📚</span> <strong>More Complete Retrieval:</strong> Chunk reform(800) + Multi-Query → 20-40% recall boost</li>
+                    <li><span class="emoji">🔒</span> <strong>Safer Answers:</strong> New Prompt eliminates hallucination, only uses Context</li>
+                    <li><span class="emoji">📐</span> <strong>More Reasonable Evaluation:</strong> Page window solves summary question misjudgment</li>
+                    <li><span class="emoji">⚙️</span> <strong>More Controllable System:</strong> Explainable, reproducible, tunable</li>
                 </ul>
             </div>
             
             <div class="result-box" style="margin-top: 20px;">
                 <h3 style="text-align: center; font-size: 28px;">
-                    ✨ 从"能跑"到"好用"的完整优化路径 ✨
+                    ✨ Complete Optimization Path from "Working" to "Working Well" ✨
                 </h3>
                 <p style="text-align: center; font-size: 18px; margin-top: 15px; color: #2c3e50;">
-                    准确率↑ + 召回率↑ + 安全性↑ + 评测科学性↑
+                    Precision↑ + Recall↑ + Safety↑ + Evaluation Scientificity↑
                 </p>
             </div>
             <div class="slide-number">9/9</div>
@@ -568,8 +567,8 @@
     </div>
 
     <div class="controls">
-        <button onclick="prevSlide()">◀ 上一页</button>
-        <button onclick="nextSlide()">下一页 ▶</button>
+        <button onclick="prevSlide()">◀ Previous</button>
+        <button onclick="nextSlide()">Next ▶</button>
     </div>
 
     <script>
@@ -591,7 +590,6 @@
             showSlide(currentSlide - 1);
         }
 
-        // 键盘控制
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') {
                 nextSlide();
